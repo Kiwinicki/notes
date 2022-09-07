@@ -1,0 +1,31 @@
+@use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
+
+.container {
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 2px solid $surface;
+	padding: 1rem;
+}
+
+.logo {
+	font-weight: 700;
+	font-weight: 5rem;
+}
+
+.searchBar {
+	@include border;
+	background-color: $surface;
+	height: 2rem;
+	padding: 0 1rem;
+	width: 33%;
+}
+
+.loginContainer {
+	position: relative;
+}
+
+.btnsContainer {
+	display: flex;
+	gap: 1rem;
+}

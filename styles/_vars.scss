@@ -1,0 +1,17 @@
+@use 'sass:color';
+
+$primary: rgb(255, 196, 0);
+$primary-variant: color.scale($primary, $lightness: -7.5%);
+$on-primary: rgb(14, 14, 14);
+
+$bg: rgb(32, 31, 29);
+$on-bg: white;
+
+$surface: color.scale($bg, $lightness: 10%);
+$on-surface: white;
+
+$warning: yellow;
+
+$error: red;
+
+$success: green;

@@ -1,0 +1,15 @@
+@use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
+
+.form {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	transform: translateX(-100%);
+	left: 100%;
+	background-color: $bg;
+	padding: 1rem;
+	@include border;
+	margin-top: 10px;
+}

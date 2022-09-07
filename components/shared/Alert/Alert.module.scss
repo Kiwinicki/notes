@@ -1,0 +1,13 @@
+@use '../../../styles/vars' as *;
+
+.alertWarning {
+	color: $warning;
+}
+
+.alertError {
+	color: $error;
+}
+
+.alertSuccess {
+	color: $success;
+}

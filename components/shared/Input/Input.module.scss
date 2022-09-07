@@ -1,0 +1,9 @@
+@use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
+
+.input {
+	@include border;
+	padding: 10px;
+	background-color: $bg;
+	color: $on-bg;
+}

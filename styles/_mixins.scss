@@ -1,0 +1,6 @@
+@use './vars' as *;
+
+@mixin border {
+	border: 2px solid $surface;
+	border-radius: 10px;
+}

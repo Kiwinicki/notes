@@ -1,0 +1,39 @@
+@use '../../styles/vars' as *;
+@use '../../styles/mixins' as *;
+
+.main {
+	display: flex;
+	width: 100%;
+	flex-grow: 1;
+}
+
+.categories {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
+	max-width: 20vw;
+	border-right: 2px solid $surface;
+	padding: 1rem;
+	gap: 1rem;
+}
+
+.notes {
+	display: grid;
+	width: 100%;
+	grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+	grid-template-rows: repeat(auto-fit, 1fr);
+	gap: 1rem;
+	padding: 1rem;
+	align-content: start;
+}
+
+.note {
+	@include border;
+	height: min-content;
+	padding: 1rem;
+	transition: 0.2s ease-in-out;
+	&:hover {
+		background-color: $surface;
+		cursor: pointer;
+	}
+}
