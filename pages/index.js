@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Home } from '../components/Home/Home';
 import { Layout } from '../components/Layout/Layout';
-import { Button } from '../components/shared/Button/Button';
 
 export default function HomePage() {
 	return (

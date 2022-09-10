@@ -27,7 +27,7 @@ export const Header = () => {
 			<Link href="/">
 				<span className={styles.logo}>Notatki</span>
 			</Link>
-			<input type="text" className={styles.searchBar} />
+			<input type="text" className={styles.searchBar} placeholder="Szukaj" />
 			{userType === userTypes.admin ? (
 				<div className={styles.btnsContainer}>
 					<Button

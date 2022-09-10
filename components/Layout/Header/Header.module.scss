@@ -4,7 +4,7 @@
 .container {
 	display: flex;
 	justify-content: space-between;
-	border-bottom: 2px solid $surface;
+	border-bottom: $border;
 	padding: 1rem;
 }
 

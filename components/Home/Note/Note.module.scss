@@ -1,0 +1,46 @@
+@use 'sass:color';
+@use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
+
+.note {
+	@include border;
+	padding: 1rem;
+	transition: 0.2s ease-in-out;
+	content-visibility: auto;
+	&:hover {
+		background-color: $surface;
+		cursor: pointer;
+	}
+}
+
+.noteTitle {
+	margin-bottom: 1rem;
+}
+
+.noteContent {
+	white-space: pre-wrap;
+	max-height: 8em;
+	overflow: hidden;
+	&::after {
+		content: '...';
+		width: 100%;
+		left: 0;
+		top: 100%;
+		text-align: center;
+		position: absolute;
+		transform: translateY(calc(-100% - 1rem));
+		font-size: 1.75rem;
+	}
+}
+
+.categoryLabel {
+	background-color: color.scale($primary, $alpha: -35%);
+	padding: 5px 10px;
+	border-radius: 10px;
+	color: $bg;
+	font-weight: 600;
+	transition: $duration background-color;
+	&:hover {
+		background-color: $primary;
+	}
+}
