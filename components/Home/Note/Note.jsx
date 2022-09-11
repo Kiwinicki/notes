@@ -2,13 +2,14 @@ import { MDXRemote } from 'next-mdx-remote';
 import styles from './Note.module.scss';
 import { useMongoDB } from '../../../providers/MongoDB';
 import { useState, useEffect } from 'react';
+import useRealmStore from '../../../hooks/useRealmStore';
 
 // components for MDX
 import { code } from '../../mdx/code';
-import { Button } from '../../shared/Button/Button'; // TODO remove, only components from components/mdx directory
+import { Button } from '../../shared/Button/Button'; // TODO: remove, only components from components/mdx directory
 
 export const Note = ({ title, content, categoryId }) => {
-	const { db } = useMongoDB();
+	const db = useRealmStore(({ db }) => db);
 	const [categoryObj, setCategoryObj] = useState({});
 
 	useEffect(() => {

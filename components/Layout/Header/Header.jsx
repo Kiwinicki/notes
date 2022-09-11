@@ -2,19 +2,28 @@ import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Header.module.scss';
 import { Button } from '../../shared/Button/Button';
-import { useMongoDB } from '../../../providers/MongoDB';
-import { useRealmApp, userTypes } from '../../../providers/RealmApp';
+// import { useMongoDB } from '../../../providers/MongoDB';
+// import { useRealmApp, userTypes } from '../../../providers/RealmApp';
 import * as RealmWeb from 'realm-web';
 import { LoginForm } from '../LoginForm/LoginForm';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
+import useRealmStore, { userTypes } from '../../../hooks/useRealmStore';
 
 export const Header = () => {
 	const {
 		BSON: { ObjectId },
 	} = RealmWeb;
 
-	const { logIn, logOut, user, userType } = useRealmApp();
-	const { db } = useMongoDB();
+	// const { logIn, logOut, user, userType } = useRealmApp();
+	// const { db } = useMongoDB();
+
+	const { userType, logIn, logOut } = useRealmStore(
+		({ userType, logIn, logOut }) => ({
+			userType,
+			logIn,
+			logOut,
+		})
+	);
 
 	const {
 		ref,
@@ -30,26 +39,27 @@ export const Header = () => {
 			<input type="text" className={styles.searchBar} placeholder="Szukaj" />
 			{userType === userTypes.admin ? (
 				<div className={styles.btnsContainer}>
-					<Button
-						onClick={async () => {
-							const resp = await db
-								.collection('notes')
-								.insertOne({
-									title: 'Angular jest spoko',
-									content: 'MDX content o angularze2',
-									category: new ObjectId('6310ad9a88de2873936bb463'),
-									public: true,
-								})
-								.catch((err) => console.warn(err));
-							console.log(resp);
-						}}
+					<Link
+						href="/edytor"
+						// onClick={async () => {
+						// 	const resp = await db
+						// 		.collection('notes')
+						// 		.insertOne({
+						// 			title: 'Angular jest spoko',
+						// 			content: 'MDX content o angularze2',
+						// 			category: new ObjectId('6310ad9a88de2873936bb463'),
+						// 			public: true,
+						// 		})
+						// 		.catch((err) => console.warn(err));
+						// 	console.log(resp);
+						// }}
 					>
 						Dodaj notatkę
-					</Button>
+					</Link>
 					<Button
 						onClick={() => {
 							logOut();
-							logIn();
+							logIn({}); // login: null, password: null
 						}}
 					>
 						Wyloguj
@@ -60,7 +70,7 @@ export const Header = () => {
 					<Button onClick={() => setFormVisible((prev) => !prev)}>
 						Zaloguj jako admin
 					</Button>
-					<LoginForm isVisible={isFormVisible} setVisible={setFormVisible} />
+					{/* <LoginForm isVisible={isFormVisible} setVisible={setFormVisible} /> */}
 				</div>
 			)}
 		</header>

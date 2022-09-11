@@ -1,37 +1,41 @@
 import { useState, useEffect } from 'react';
 import styles from './Home.module.scss';
-import { useRealmApp } from '../../providers/RealmApp';
-import { useMongoDB } from '../../providers/MongoDB';
 import { Button } from '../shared/Button/Button';
 import { userTypes } from '../../providers/RealmApp';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Note } from './Note/Note';
+import useRealmStore from '../../hooks/useRealmStore';
 
 export const Home = () => {
-	const { user, userType } = useRealmApp();
-	const [data, setData] = useState(null);
+	const { userType, notes, categories } = useRealmStore(
+		({ userType, notes, categories }) => ({
+			userType,
+			notes,
+			categories,
+		})
+	);
+	console.log(categories);
 
-	// initial anonymous login in RealmApp
+	const [serializedNotes, setSerializedNotes] = useState(null);
 
 	useEffect(() => {
-		(async () => {
-			if (user) {
-				const allData = await user.functions.getInitData();
-				console.log(allData);
-
-				allData.notes.forEach(async (note) => {
-					note.content = await serialize(note.content);
-				});
-				setData(allData);
-			}
-		})();
-	}, [user]);
+		if (notes) {
+			(async () => {
+				const serialized = await Promise.all(
+					notes.map((note) =>
+						serialize(note.content).then((x) => ({ ...note, content: x }))
+					)
+				);
+				setSerializedNotes(serialized);
+			})();
+		}
+	}, [notes]);
 
 	return (
 		<main className={styles.main}>
 			<aside className={styles.categories}>
-				{data &&
-					data.categories.map((category, i) => (
+				{categories &&
+					categories.map((category, i) => (
 						// TODO: filters notes by category onClick
 						<Button key={i}>{category.name}</Button>
 					))}
@@ -39,7 +43,8 @@ export const Home = () => {
 				{userType === userTypes.admin && <Button>Dodaj kategorię</Button>}
 			</aside>
 			<section className={styles.notes}>
-				{data && data.notes.map((note, i) => <Note {...note} key={i} />)}
+				{serializedNotes &&
+					serializedNotes.map((note, i) => <Note {...note} key={i} />)}
 			</section>
 		</main>
 	);
