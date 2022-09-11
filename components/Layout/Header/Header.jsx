@@ -2,8 +2,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Header.module.scss';
 import { Button } from '../../shared/Button/Button';
-// import { useMongoDB } from '../../../providers/MongoDB';
-// import { useRealmApp, userTypes } from '../../../providers/RealmApp';
 import * as RealmWeb from 'realm-web';
 import { LoginForm } from '../LoginForm/LoginForm';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
@@ -14,16 +12,9 @@ export const Header = () => {
 		BSON: { ObjectId },
 	} = RealmWeb;
 
-	// const { logIn, logOut, user, userType } = useRealmApp();
-	// const { db } = useMongoDB();
-
-	const { userType, logIn, logOut } = useRealmStore(
-		({ userType, logIn, logOut }) => ({
-			userType,
-			logIn,
-			logOut,
-		})
-	);
+	const userType = useRealmStore((state) => state.userType);
+	const logIn = useRealmStore((state) => state.logIn);
+	const logOut = useRealmStore((state) => state.logOut);
 
 	const {
 		ref,
@@ -59,7 +50,7 @@ export const Header = () => {
 					<Button
 						onClick={() => {
 							logOut();
-							logIn({}); // login: null, password: null
+							logIn({});
 						}}
 					>
 						Wyloguj
@@ -70,7 +61,7 @@ export const Header = () => {
 					<Button onClick={() => setFormVisible((prev) => !prev)}>
 						Zaloguj jako admin
 					</Button>
-					{/* <LoginForm isVisible={isFormVisible} setVisible={setFormVisible} /> */}
+					<LoginForm isVisible={isFormVisible} setVisible={setFormVisible} />
 				</div>
 			)}
 		</header>

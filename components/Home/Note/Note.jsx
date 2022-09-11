@@ -1,6 +1,5 @@
 import { MDXRemote } from 'next-mdx-remote';
 import styles from './Note.module.scss';
-import { useMongoDB } from '../../../providers/MongoDB';
 import { useState, useEffect } from 'react';
 import useRealmStore from '../../../hooks/useRealmStore';
 
@@ -13,13 +12,15 @@ export const Note = ({ title, content, categoryId }) => {
 	const [categoryObj, setCategoryObj] = useState({});
 
 	useEffect(() => {
-		(async () => {
-			db.collection('categories')
-				.findOne({ _id: categoryId })
-				.then((res) => setCategoryObj(res))
-				.catch((err) => console.error(err));
-		})();
-	}, []);
+		if (db) {
+			(async () => {
+				db.collection('categories')
+					.findOne({ _id: categoryId })
+					.then((res) => setCategoryObj(res))
+					.catch((err) => console.error(err));
+			})();
+		}
+	}, [db]);
 
 	const components = { code, Button };
 

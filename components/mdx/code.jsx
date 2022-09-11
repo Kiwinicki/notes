@@ -1,5 +1,5 @@
 import SyntaxHighlighter from 'react-syntax-highlighter';
-// import monokai from 'react-syntax-highlighter/dist/cjs/styles/hljs/monokai';
+import monokai from 'react-syntax-highlighter/dist/cjs/styles/hljs/monokai';
 
 export const code = ({ className, ...props }) => {
 	const match = /language-(\w+)/.exec(className || '');
@@ -7,7 +7,7 @@ export const code = ({ className, ...props }) => {
 		<SyntaxHighlighter
 			language={match[1]}
 			PreTag="div"
-			// style={monokai}
+			style={monokai}
 			{...props}
 		/>
 	) : (

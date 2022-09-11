@@ -29,13 +29,7 @@ function MyApp({ Component, pageProps }) {
 		}
 	}, [db]);
 
-	return (
-		// <RealmApp>
-		// <MongoDB>
-		<Component {...pageProps} />
-		// </MongoDB>
-		// </RealmApp>
-	);
+	return <Component {...pageProps} />;
 }
 
 export default MyApp;

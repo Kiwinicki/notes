@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import styles from './LoginForm.module.scss';
-import { useRealmApp } from '../../../providers/RealmApp';
 import { Button } from '../../shared/Button/Button';
 import { Alert } from '../../shared/Alert/Alert';
 import { Input } from '../../shared/Input/Input';
+import useRealmStore from '../../../hooks/useRealmStore';
 
 export const LoginForm = ({ isVisible, setVisible }) => {
-	const { logIn, logOut } = useRealmApp();
+	const logIn = useRealmStore((state) => state.logIn);
+	const logOut = useRealmStore((state) => state.logOut);
+
 	const [loginError, setLoginError] = useState(false);
 
 	return (

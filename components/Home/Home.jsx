@@ -7,13 +7,10 @@ import { Note } from './Note/Note';
 import useRealmStore from '../../hooks/useRealmStore';
 
 export const Home = () => {
-	const { userType, notes, categories } = useRealmStore(
-		({ userType, notes, categories }) => ({
-			userType,
-			notes,
-			categories,
-		})
-	);
+	const userType = useRealmStore((state) => state.userType);
+	const notes = useRealmStore((state) => state.notes);
+	const categories = useRealmStore((state) => state.categories);
+
 	console.log(categories);
 
 	const [serializedNotes, setSerializedNotes] = useState(null);

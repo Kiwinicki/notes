@@ -36,8 +36,8 @@ const useRealmStore = create((set, get) => ({
 		}
 	},
 	logOut: () => {
-		if (user !== null) {
-			user.logOut();
+		if (get().user !== null) {
+			get().user.logOut();
 			set((state) => ({
 				user: null,
 				userType: userTypes.none,
