@@ -1,0 +1,36 @@
+@use '../../styles/vars' as *;
+@use '../../styles/mixins' as *;
+
+.container {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.main {
+	display: flex;
+	flex-grow: 1;
+	gap: 10px;
+	padding: 10px;
+}
+
+.input {
+	flex-basis: 50%;
+}
+
+.textarea {
+	height: 100%;
+	width: 100%;
+	display: block;
+	resize: none;
+	background-color: $bg;
+	color: $on-bg;
+	@include border;
+	padding: 5px;
+}
+
+.output {
+	flex-basis: 50%;
+	@include border;
+	word-break: break-word;
+}

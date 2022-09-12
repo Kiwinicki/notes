@@ -1,0 +1,11 @@
+@use '../../../styles/vars' as *;
+
+.container {
+	border-bottom: $border;
+	padding: 10px;
+}
+
+.nav {
+	display: flex;
+	justify-content: space-around;
+}

@@ -8,9 +8,9 @@ import { useOutsideClick } from '../../../hooks/useOutsideClick';
 import useRealmStore, { userTypes } from '../../../hooks/useRealmStore';
 
 export const Header = () => {
-	const {
-		BSON: { ObjectId },
-	} = RealmWeb;
+	// const {
+	// 	BSON: { ObjectId },
+	// } = RealmWeb;
 
 	const userType = useRealmStore((state) => state.userType);
 	const logIn = useRealmStore((state) => state.logIn);
