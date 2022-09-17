@@ -6,9 +6,7 @@ import { Input } from '../../shared/Input/Input';
 import useRealmStore from '../../../hooks/useRealmStore';
 
 export const LoginForm = ({ isVisible, setVisible }) => {
-	const logIn = useRealmStore((state) => state.logIn);
-	const logOut = useRealmStore((state) => state.logOut);
-
+	const switchUser = useRealmStore((state) => state.switchUser);
 	const [loginError, setLoginError] = useState(false);
 
 	return (
@@ -17,11 +15,11 @@ export const LoginForm = ({ isVisible, setVisible }) => {
 			onSubmit={(event) => {
 				event.preventDefault();
 				(async () => {
-					logOut();
-					const resp = await logIn({
+					const resp = await switchUser({
 						login: event.target[0].value,
 						password: event.target[1].value,
 					});
+
 					setVisible((prev) => (resp ? false : prev));
 					setLoginError(resp ? false : true);
 				})();

@@ -1,0 +1,20 @@
+@use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
+
+.select {
+	@include border;
+	background-color: $bg;
+	color: $on-bg;
+	padding: 10px;
+	height: 40px;
+	font-weight: 600;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	background-image: url('./ChevronDown.svg');
+	background-size: 1rem;
+	background-repeat: no-repeat;
+	background-position: calc(100% - 10px);
+	display: inline-block;
+	position: relative;
+}

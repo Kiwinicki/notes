@@ -1,8 +1,6 @@
 import '../styles/globals.scss';
 import useRealmStore from '../hooks/useRealmStore';
 import { useEffect } from 'react';
-// import RealmApp from '../providers/RealmApp';
-// import MongoDB from '../providers/MongoDB';
 
 function MyApp({ Component, pageProps }) {
 	const { logIn, initDb, getNotes, getCategories, db } = useRealmStore(

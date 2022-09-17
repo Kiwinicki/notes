@@ -11,6 +11,6 @@ export const code = ({ className, ...props }) => {
 			{...props}
 		/>
 	) : (
-		<code className={className} {...props} />
+		<code className={className} style={{ color: 'red' }} {...props} /> // TODO: styles for inline code
 	);
 };

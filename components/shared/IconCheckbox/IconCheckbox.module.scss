@@ -1,0 +1,30 @@
+@use '../../../styles/vars' as *;
+
+.iconCheckbox {
+	position: relative;
+	width: 2.5rem;
+	height: 2.5rem;
+	& input {
+		cursor: pointer;
+		opacity: 0;
+		width: 2.5rem;
+		height: 2.5rem;
+		position: absolute;
+		margin: 0;
+		& + svg {
+			color: $surface;
+		}
+		&:checked + svg {
+			color: $on-surface;
+		}
+	}
+	& svg {
+		width: 2.5rem;
+		height: 2.5rem;
+		padding: 5px;
+		background-color: $bg;
+		border: 2px solid $on-bg;
+		transition: $duration;
+		border-radius: 10px;
+	}
+}

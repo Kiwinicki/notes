@@ -1,11 +1,38 @@
 @use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
 
 .container {
 	border-bottom: $border;
 	padding: 10px;
+	display: flex;
+	gap: 1rem;
+	width: 100%;
 }
 
+.checkboxes,
+.form,
 .nav {
 	display: flex;
-	justify-content: space-around;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.form {
+	content: '';
+	flex-grow: 1;
+	flex-basis: 100%;
+	justify-content: end;
+}
+
+.nav * {
+	width: max-content;
+}
+
+.switch {
+	display: flex;
+	flex-direction: column;
+	& label {
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
 }

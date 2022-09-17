@@ -1,0 +1,50 @@
+@use '../../../styles/vars' as *;
+
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 30px;
+	& input {
+		cursor: pointer;
+		opacity: 0;
+		width: 60px;
+		height: 30px;
+		position: absolute;
+		z-index: 1;
+		margin: 0;
+		&:checked + span {
+			background-color: $primary;
+			&::before {
+				transform: translateX(30px);
+			}
+		}
+		&:focus + span {
+			border: 2px solid white;
+		}
+	}
+	& span {
+		position: absolute;
+		cursor: pointer;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: 0;
+		background-color: $bg;
+		border: $border;
+		transition: $duration;
+		border-radius: 30px;
+		&::before {
+			content: '';
+			position: absolute;
+			height: 26px;
+			width: 26px;
+			left: 0px;
+			bottom: 0px;
+			background-color: $on-bg;
+			transition: $duration;
+			border-radius: 50%;
+		}
+	}
+}

@@ -7,3 +7,10 @@
 	background-color: $bg;
 	color: $on-bg;
 }
+
+.error {
+	border: 2px solid $error;
+	&::placeholder {
+		color: $error;
+	}
+}

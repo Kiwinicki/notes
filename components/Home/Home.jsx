@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import styles from './Home.module.scss';
 import { Button } from '../shared/Button/Button';
-import { userTypes } from '../../providers/RealmApp';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Note } from './Note/Note';
-import useRealmStore from '../../hooks/useRealmStore';
+import useRealmStore, { userTypes } from '../../hooks/useRealmStore';
 
 export const Home = () => {
 	const userType = useRealmStore((state) => state.userType);
 	const notes = useRealmStore((state) => state.notes);
 	const categories = useRealmStore((state) => state.categories);
-
-	console.log(categories);
 
 	const [serializedNotes, setSerializedNotes] = useState(null);
 

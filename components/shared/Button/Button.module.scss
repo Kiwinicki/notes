@@ -1,17 +1,38 @@
 @use '../../../styles/vars' as *;
+@use '../../../styles/mixins' as *;
 
 .button {
 	background-color: $bg;
 	color: $on-bg;
-	border: 2px solid $surface;
+	@include border;
 	font-weight: 600;
-	border-radius: 10px;
+	font-size: 1rem;
 	padding: 10px;
 	transition: 0.2s ease-in-out;
+	height: min-content;
+	font-family: inherit;
 	&:hover {
 		background-color: $primary;
 		color: $on-primary;
 		border: 2px solid $primary;
 		cursor: pointer;
 	}
+	&:disabled {
+		background-color: $bg;
+		color: $surface;
+		&:hover {
+			border: 2px solid $surface;
+			cursor: not-allowed;
+		}
+	}
+}
+
+.buttonLink {
+	@extend .button;
+	text-decoration: none;
+}
+
+.error {
+	border: 2px solid $error;
+	color: $error;
 }

@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as *;
 
 .container {
-	min-height: 100vh;
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
 }
@@ -16,6 +16,7 @@
 
 .input {
 	flex-basis: 50%;
+	flex-grow: 1;
 }
 
 .textarea {
@@ -30,7 +31,26 @@
 }
 
 .output {
+	flex-grow: 1;
 	flex-basis: 50%;
-	@include border;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-items: center;
+}
+
+.renderedOutput {
 	word-break: break-word;
+	@include border;
+	padding: 10px;
+	height: 100%;
+	width: 100%;
+}
+
+.closed {
+	position: absolute;
+	max-width: 0;
+	max-height: 0;
+	opacity: 0;
+	visibility: hidden;
 }

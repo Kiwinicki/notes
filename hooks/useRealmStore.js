@@ -11,6 +11,7 @@ const REALM_APP_ID = process.env.NEXT_PUBLIC_REALM_APP_ID;
 const app = new RealmWeb.App({ id: REALM_APP_ID });
 
 const useRealmStore = create((set, get) => ({
+	app,
 	user: null,
 	userType: userTypes.none,
 	logIn: async ({ login, password }) => {
@@ -19,12 +20,11 @@ const useRealmStore = create((set, get) => ({
 			? RealmWeb.Credentials.emailPassword(login, password)
 			: RealmWeb.Credentials.function();
 
-		console.log('credentials', credentials);
-
 		try {
 			const user = await app.logIn(credentials);
+			console.log(user.id);
 			set({
-				user: user,
+				user: app.currentUser,
 				userType: withLoginAndPasswd ? userTypes.admin : userTypes.visitor,
 			});
 		} catch (err) {
@@ -38,10 +38,10 @@ const useRealmStore = create((set, get) => ({
 	logOut: () => {
 		if (get().user !== null) {
 			get().user.logOut();
-			set((state) => ({
+			set({
 				user: null,
 				userType: userTypes.none,
-			}));
+			});
 		}
 	},
 	db: null,
@@ -70,6 +70,14 @@ const useRealmStore = create((set, get) => ({
 		} catch (err) {
 			console.error(err);
 		}
+	},
+	switchUser: async (loginInfo) => {
+		const resp = await get().logIn(loginInfo);
+		get().app.switchUser(app.currentUser);
+		get().initDb();
+		get().getCategories();
+		get().getNotes();
+		return resp;
 	},
 }));
 
