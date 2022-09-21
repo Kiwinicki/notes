@@ -6,6 +6,7 @@
 	justify-content: space-between;
 	border-bottom: $border;
 	padding: 1rem;
+	gap: 10%;
 }
 
 .logo {
@@ -13,12 +14,29 @@
 	font-weight: 5rem;
 }
 
+.searchContainer {
+	position: relative;
+	flex-grow: 1;
+	&:focus-within .searchResults {
+		visibility: visible;
+	}
+}
+
 .searchBar {
+	width: 100%;
+}
+
+.searchResults {
+	visibility: hidden;
+	transform: translateY(10px);
+	position: absolute;
+	background: $bg;
+	z-index: 1;
 	@include border;
-	background-color: $surface;
-	height: 2rem;
-	padding: 0 1rem;
-	width: 33%;
+	width: 100%;
+	& * {
+		@include txtOverflow(1);
+	}
 }
 
 .loginContainer {

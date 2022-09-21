@@ -4,3 +4,12 @@
 	border: 2px solid $surface;
 	border-radius: 10px;
 }
+
+@mixin txtOverflow($lineNumber: 1) {
+	display: -webkit-box;
+	line-clamp: $lineNumber;
+	-webkit-line-clamp: $lineNumber;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

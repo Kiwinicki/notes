@@ -4,6 +4,7 @@ import { Button } from '../shared/Button/Button';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Note } from './Note/Note';
 import useRealmStore, { userTypes } from '../../hooks/useRealmStore';
+import { useRouter } from 'next/router';
 
 export const Home = () => {
 	const userType = useRealmStore((state) => state.userType);
@@ -24,6 +25,9 @@ export const Home = () => {
 			})();
 		}
 	}, [notes]);
+
+	const router = useRouter();
+	console.log(router.query);
 
 	return (
 		<main className={styles.main}>
