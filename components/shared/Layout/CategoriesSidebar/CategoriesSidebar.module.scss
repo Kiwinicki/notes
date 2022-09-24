@@ -1,0 +1,11 @@
+@use '../../../../styles/vars' as *;
+
+.categories {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
+	max-width: 20vw;
+	border-right: $border;
+	padding: 1rem;
+	gap: 1rem;
+}

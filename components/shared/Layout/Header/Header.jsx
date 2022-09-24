@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './Header.module.scss';
-import { Button, ButtonLink } from '../../shared/Button/Button';
-import { Input } from '../../shared/Input/Input';
-import { LoginForm } from '../LoginForm/LoginForm';
-import { useOutsideClick } from '../../../hooks/useOutsideClick';
-import useRealmStore, { userTypes } from '../../../hooks/useRealmStore';
-import { debounced } from '../../../utils/debounced';
+import { Button, ButtonLink } from '../../Button/Button';
+import { Input } from '../../Input/Input';
+import { LoginForm } from './LoginForm/LoginForm';
+import { useOutsideClick } from '../../../../hooks/useOutsideClick';
+import useRealmStore, { userTypes } from '../../../../hooks/useRealmStore';
+import { debounced } from '../../../../utils/debounced';
 import Router from 'next/router';
 
 export const Header = () => {
@@ -38,8 +38,10 @@ export const Header = () => {
 					onSubmit={(ev) => {
 						ev.preventDefault();
 						Router.push({
-							// pathname: '/szukaj',
-							query: { szukaj: ev.target[0].value },
+							pathname: '/szukaj',
+							query: { phrase: ev.target[0].value },
+							// query: { category: ev.target[0].value },
+							// query: { phrase_and_category: ev.target[0].value },
 						});
 					}}
 				>

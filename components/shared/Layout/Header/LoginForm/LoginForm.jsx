@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styles from './LoginForm.module.scss';
-import { Button } from '../../shared/Button/Button';
-import { Alert } from '../../shared/Alert/Alert';
-import { Input } from '../../shared/Input/Input';
-import useRealmStore from '../../../hooks/useRealmStore';
+import { Button } from '../../../Button/Button';
+import { Alert } from '../../../Alert/Alert';
+import { Input } from '../../../Input/Input';
+import useRealmStore from '../../../../../hooks/useRealmStore';
 
 export const LoginForm = ({ isVisible, setVisible }) => {
 	const switchUser = useRealmStore((state) => state.switchUser);

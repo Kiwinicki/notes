@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { Editor } from '../components/Editor/Editor';
 import { AnonymousRedirect } from '../components/shared/AnonymousRedirect';
 
-export default function EditorPage() {
+export default function NewNotePage() {
 	return (
 		<AnonymousRedirect>
 			<Head>

@@ -1,26 +1,38 @@
-import { MDXRemote } from 'next-mdx-remote';
+import { useState, useEffect } from 'react';
 import styles from './Note.module.scss';
+import { MDXRemote } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 import { components } from '../../mdx/allComponents';
 import Link from 'next/link';
 
-export const Note = ({ title, content, categoryName, _id }) => (
-	<Link href={`/notatka/${_id.toString()}`}>
-		<div className={styles.note}>
-			<h2 className={styles.title}>{title}</h2>
-			<article className={styles.content}>
-				<MDXRemote {...content} components={components} />
-			</article>
-			<div className={styles.bottom}>
-				{/* TODO: filter by category onClick? */}
-				<span className={styles.categoryLabel}>{categoryName}</span>
-				{/* TODO: remove note onClick */}
-				<button className={styles.removeButton}>
-					<TrashIcon />
-				</button>
+export const Note = ({ title, content, categoryName, _id }) => {
+	const [serializedContent, setSerializedContent] = useState(null);
+
+	useEffect(() => {
+		serialize(content).then((x) => setSerializedContent(x));
+	}, [content]);
+
+	return (
+		<Link href={`/notatka/${_id.toString()}`}>
+			<div className={styles.note}>
+				<h2 className={styles.title}>{title}</h2>
+				<article className={styles.content}>
+					{serializedContent && (
+						<MDXRemote {...serializedContent} components={components} />
+					)}
+				</article>
+				<div className={styles.bottom}>
+					{/* TODO: filter by category onClick? */}
+					<span className={styles.categoryLabel}>{categoryName}</span>
+					{/* TODO: remove note onClick */}
+					<button className={styles.removeButton}>
+						<TrashIcon />
+					</button>
+				</div>
 			</div>
-		</div>
-	</Link>
-);
+		</Link>
+	);
+};
 
 const TrashIcon = () => (
 	<svg

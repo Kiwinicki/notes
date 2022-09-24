@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { BSON } from 'realm-web';
-import useRealmStore from '../../hooks/useRealmStore';
+import useRealmStore, { userTypes } from '../../hooks/useRealmStore';
+import { Layout } from '../../components/shared/Layout/Layout';
 
 const { ObjectId } = BSON;
 
@@ -35,13 +36,19 @@ export default function NotePage() {
 
 	return (
 		// albo edytor dla admina lub home layout dla visitor
-		<div>
-			{thisNote && (
+		<>
+			{userTypes.admin ? (
+				<Layout>dupa</Layout>
+			) : (
 				<>
-					{noteId} <h1>{thisNote.title}</h1>
-					<p style={{ whiteSpace: 'pre' }}>{thisNote.content}</p>
+					(thisNote &&
+					<>
+						{noteId} <h1>{thisNote.title}</h1>
+						<p style={{ whiteSpace: 'pre' }}>{thisNote.content}</p>
+					</>
+					)
 				</>
 			)}
-		</div>
+		</>
 	);
 }
