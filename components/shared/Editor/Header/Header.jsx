@@ -1,11 +1,11 @@
 import styles from './Header.module.scss';
-import { Button, ButtonLink } from '../../shared/Button/Button';
-import { Switch } from '../../shared/Switch/Switch';
-import useRealmStore from '../../../hooks/useRealmStore';
-import { Input } from '../../shared/Input/Input';
 import { useForm } from 'react-hook-form';
-import { Select } from '../../shared/Select/Select';
-import { IconCheckbox } from '../../shared/IconCheckbox/IconCheckbox';
+import { Button, ButtonLink } from '../../Button/Button';
+import { Switch } from '../../Switch/Switch';
+import { Input } from '../../Input/Input';
+import { Select } from '../../Select/Select';
+import { IconCheckbox } from '../../IconCheckbox/IconCheckbox';
+import useRealmStore from '../../../../hooks/useRealmStore';
 
 export const Header = ({
 	saveHandler,
@@ -67,7 +67,7 @@ export const Header = ({
 				}}
 				className={styles.form}
 			>
-				<div>
+				<div className={styles.titleContainer}>
 					<label htmlFor="title" className="srOnly">
 						Tytuł notatki
 					</label>

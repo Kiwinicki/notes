@@ -13,7 +13,7 @@ export const Note = ({ title, content, categoryName, _id }) => {
 	}, [content]);
 
 	return (
-		<Link href={`/notatka/${_id.toString()}`}>
+		<Link href={`/note/${_id.toString()}`}>
 			<div className={styles.note}>
 				<h2 className={styles.title}>{title}</h2>
 				<article className={styles.content}>

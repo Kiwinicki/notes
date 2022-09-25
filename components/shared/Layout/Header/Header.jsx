@@ -38,7 +38,7 @@ export const Header = () => {
 					onSubmit={(ev) => {
 						ev.preventDefault();
 						Router.push({
-							pathname: '/szukaj',
+							pathname: '/',
 							query: { phrase: ev.target[0].value },
 							// query: { category: ev.target[0].value },
 							// query: { phrase_and_category: ev.target[0].value },
@@ -55,7 +55,7 @@ export const Header = () => {
 				<div className={styles.searchResults}>
 					{searchResults.length > 0 ? (
 						searchResults.map(({ title, _id }, i) => (
-							<Link href={`/notatka/${_id.toString()}`} key={i}>
+							<Link href={`/note/${_id.toString()}`} key={i}>
 								{title}
 							</Link>
 						))

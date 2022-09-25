@@ -3,10 +3,10 @@ import styles from './Editor.module.scss';
 import { Header } from './Header/Header';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
-import { Alert } from '../shared/Alert/Alert';
-import useRealmStore from '../../hooks/useRealmStore';
-import { components } from '../mdx/allComponents';
-import { useToggle } from '../../hooks/useToggle';
+import { Alert } from '..//Alert/Alert';
+import { components } from '../../mdx/allComponents';
+import useRealmStore from '../../../hooks/useRealmStore';
+import { useToggle } from '../../../hooks/useToggle';
 
 const errorTypes = {
 	none: false,
@@ -17,11 +17,17 @@ const errorTypes = {
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
-export const Editor = () => {
+export const Editor = ({
+	title: noteTitle = '',
+	content: noteContent = '',
+	categoryName = '',
+	public: isPublic,
+	editDate,
+}) => {
 	const db = useRealmStore((state) => state.db);
 	const categories = useRealmStore((state) => state.categories);
 
-	const [content, setContent] = useState('');
+	const [content, setContent] = useState(noteContent);
 	const [serialized, setSerialized] = useState(null);
 	const [noteError, setNoteError] = useState(errorTypes.none);
 	const [isSaveError, setIsSaveError] = useState(false);
@@ -62,6 +68,7 @@ export const Editor = () => {
 					title,
 					content,
 					categoryName,
+					editDate: new Date(),
 				});
 				console.log(insertedId);
 			} catch (error) {
@@ -82,7 +89,7 @@ export const Editor = () => {
 				{...{ isEditorOpen, setIsEditorOpen, isPreviewOpen, setIsPreviewOpen }}
 			/>
 			<main className={styles.main}>
-				<form
+				<div
 					className={`${styles.input} ${!isEditorOpen ? styles.closed : ''}`}
 				>
 					<textarea
@@ -94,7 +101,7 @@ export const Editor = () => {
 						onInput={handleInput}
 						placeholder="# Treść notatki"
 					/>
-				</form>
+				</div>
 				<div
 					className={`${styles.output} ${!isPreviewOpen ? styles.closed : ''}`}
 				>

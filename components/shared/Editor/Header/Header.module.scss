@@ -1,5 +1,5 @@
-@use '../../../styles/vars' as *;
-@use '../../../styles/mixins' as *;
+@use '../../../../styles/vars' as *;
+@use '../../../../styles/mixins' as *;
 
 .container {
 	border-bottom: $border;
@@ -7,6 +7,7 @@
 	display: flex;
 	gap: 1rem;
 	width: 100%;
+	flex-wrap: wrap;
 }
 
 .checkboxes,
@@ -18,10 +19,17 @@
 }
 
 .form {
-	content: '';
+	flex-grow: 1;
+	// flex-wrap: wrap;
+}
+
+.titleContainer {
 	flex-grow: 1;
 	flex-basis: 100%;
-	justify-content: end;
+	min-width: 100px;
+	& input {
+		width: 100%;
+	}
 }
 
 .nav * {
