@@ -1,22 +1,14 @@
+import { useEffect } from 'react';
 import styles from './Header.module.scss';
-import { useForm } from 'react-hook-form';
 import { Button, ButtonLink } from '../../Button/Button';
 import { Switch } from '../../Switch/Switch';
 import { Input } from '../../Input/Input';
 import { Select } from '../../Select/Select';
 import { IconCheckbox } from '../../IconCheckbox/IconCheckbox';
 import useRealmStore from '../../../../hooks/useRealmStore';
+import useEditorStore, { errorTypes } from '../useEditorStore';
 
-export const Header = ({
-	saveHandler,
-	noteError,
-	isSaveError,
-	validate,
-	isEditorOpen,
-	setIsEditorOpen,
-	isPreviewOpen,
-	setIsPreviewOpen,
-}) => {
+export const Header = ({ saveHandler, validate }) => {
 	const categories = useRealmStore((state) => state.categories);
 	const categoriesOptions = categories.map((cat) => ({
 		value: cat.name,
@@ -24,19 +16,19 @@ export const Header = ({
 	}));
 
 	const {
-		register,
-		handleSubmit,
-		watch,
-		getValues,
-		formState: { errors },
-	} = useForm({
-		defaultValues: {
-			title: '',
-			isPublic: false,
-			categoryName: categories[0].name,
-		},
-	});
-	const watchIsPublic = watch('isPublic');
+		title,
+		categoryName,
+		isPublic,
+		setValues,
+		error,
+		isEditorOpen,
+		isPreviewOpen,
+		toggle,
+	} = useEditorStore();
+
+	useEffect(() => {
+		!categoryName && setValues({ categoryName: categories[0].name });
+	}, []);
 
 	return (
 		<header className={styles.container}>
@@ -44,26 +36,24 @@ export const Header = ({
 				<IconCheckbox
 					title="Edytor"
 					value={isEditorOpen}
-					onChange={setIsEditorOpen}
-					defaultChecked
+					onChange={() => toggle('isEditorOpen')}
 				>
 					<EditIcon />
 				</IconCheckbox>
 				<IconCheckbox
 					title="Podgląd"
 					value={isPreviewOpen}
-					onChange={setIsPreviewOpen}
-					defaultChecked
+					onChange={() => toggle('isPreviewOpen')}
 				>
 					<PreviewIcon />
 				</IconCheckbox>
 			</div>
 
 			<form
-				onSubmit={handleSubmit(saveHandler)}
+				// onSubmit={handleSubmit(saveHandler)}
 				onChange={() => {
-					const formState = getValues();
-					validate(formState);
+					// const formState = getValues();
+					validate();
 				}}
 				className={styles.form}
 			>
@@ -75,23 +65,35 @@ export const Header = ({
 						id="title"
 						placeholder="Tytuł notatki"
 						title="Tytuł notatki"
-						{...register('title', { required: true })}
-						{...(errors.title && { error: true })}
+						value={title}
+						name="title"
+						onChange={(e) => setValues({ title: e.target.value })}
+						// {...register('title', { required: true })}
+						{...(errorTypes.emptyTitle === error && { error: true })}
 					/>
 				</div>
 				<div className={styles.switch}>
-					<Switch {...register('isPublic')} title="Status notatki" />
-					<label>{watchIsPublic ? 'Publiczna' : 'Prywatna'}</label>
+					<Switch
+						name="isPublic"
+						value={isPublic}
+						onChange={() => toggle('isPublic')}
+						title="Status notatki"
+					/>
+					<label>{isPublic ? 'Publiczna' : 'Prywatna'}</label>
 				</div>
 				<Select
-					{...register('categoryName', { required: true })}
+					name="categoryName"
+					value={categoryName}
+					onChange={(e) => setValues({ categoryName: e.target.value })}
+					// {...register('categoryName', { required: true })}
 					options={categoriesOptions}
 					title="Kategoria notatki"
 				/>
 				<Button
 					type="submit"
-					{...(noteError && { disabled: true })}
-					error={isSaveError}
+					{...(error && { disabled: true })}
+					error={error}
+					onClick={saveHandler}
 				>
 					Zapisz
 				</Button>

@@ -8,6 +8,9 @@ import useRealmStore, { userTypes } from '../../hooks/useRealmStore';
 import { Editor } from '../../components/shared/Editor/Editor';
 import { Layout } from '../../components/shared/Layout/Layout';
 import { components } from '../../components/mdx/allComponents';
+import { NoteForVisitor } from '../../components/NotePage/NoteForVisitor/NoteForVisitor';
+import { NoteForAdmin } from '../../components/NotePage/NoteForAdmin/NoteForAdmin';
+import useEditorStore from '../../components/shared/Editor/useEditorStore';
 
 const { ObjectId } = BSON;
 
@@ -15,35 +18,25 @@ export default function NotePage() {
 	const router = useRouter();
 	const { noteId } = router.query;
 
-	const [thisNote, setThisNote] = useState(null);
-
 	const userType = useRealmStore((state) => state.userType);
-	const notes = useRealmStore((state) => state.notes);
 	const db = useRealmStore((state) => state.db);
+
+	// const setValues = useEditorStore((state) => state.setValues);
+	const [note, setNote] = useState(null);
 
 	useEffect(() => {
 		(async () => {
-			const noteFromLocalState =
-				notes && notes.find((note) => noteId === note._id.toString());
-			if (noteFromLocalState) {
-				const serializedContent = await serialize(noteFromLocalState.content);
-				setThisNote({ ...noteFromLocalState, content: serializedContent });
-			} else {
-				if (db) {
-					const fetchedNote = await db
-						.collection('notes')
-						.findOne({ _id: ObjectId(noteId) });
-					const serializedContent = await serialize(fetchedNote.content);
-					setThisNote({ ...fetchedNote, content: serializedContent });
-				}
+			if (db) {
+				const fetchedNote = await db
+					.collection('notes')
+					.findOne({ _id: ObjectId(noteId) });
+				setNote(fetchedNote);
+				// setValues({ title, content, categoryName, isPublic });
 			}
 		})();
-	}, [db, notes]); // eslint-disable-line react-hooks/exhaustive-deps
-
-	console.log(thisNote);
+	}, [db]);
 
 	return (
-		// albo edytor dla admina lub home layout dla visitor
 		<>
 			<Head>
 				<title>Create Next App</title>
@@ -51,21 +44,9 @@ export default function NotePage() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			{userType === userTypes.admin ? (
-				<Editor />
+				<NoteForAdmin {...note} />
 			) : (
-				<>
-					{thisNote && (
-						<Layout>
-							<section>
-								<p>Tytuł: {thisNote.title}</p>
-								{console.log(thisNote.content)}
-								{thisNote.content && (
-									<MDXRemote {...thisNote.content} components={components} />
-								)}
-							</section>
-						</Layout>
-					)}
-				</>
+				<NoteForVisitor {...note} />
 			)}
 		</>
 	);

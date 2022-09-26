@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import styles from './Editor.module.scss';
 import { Header } from './Header/Header';
 import { MDXRemote } from 'next-mdx-remote';
@@ -6,61 +6,78 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { Alert } from '..//Alert/Alert';
 import { components } from '../../mdx/allComponents';
 import useRealmStore from '../../../hooks/useRealmStore';
-import { useToggle } from '../../../hooks/useToggle';
-
-const errorTypes = {
-	none: false,
-	serialize: 'Problem z MDX',
-	category: 'Ustawiono notatkę jako publiczną i wybrano prywatną kategorię',
-	emptyTitle: 'Brak tytułu notatki',
-};
+import useEditorStore, { errorTypes } from './useEditorStore';
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
 export const Editor = ({
-	title: noteTitle = '',
-	content: noteContent = '',
-	categoryName = '',
-	public: isPublic,
-	editDate,
+	title: initTitle = '',
+	content: initContent = '',
+	serializedContent: initSerializedContent = '',
+	categoryName: initCategoryName = '',
+	public: initIsPublic = false,
 }) => {
 	const db = useRealmStore((state) => state.db);
 	const categories = useRealmStore((state) => state.categories);
 
-	const [content, setContent] = useState(noteContent);
-	const [serialized, setSerialized] = useState(null);
-	const [noteError, setNoteError] = useState(errorTypes.none);
-	const [isSaveError, setIsSaveError] = useState(false);
-	const [isEditorOpen, setIsEditorOpen] = useToggle(true);
-	const [isPreviewOpen, setIsPreviewOpen] = useToggle(true);
+	console.log('initPUblic', initIsPublic);
+
+	const {
+		title,
+		content,
+		serializedContent,
+		categoryName,
+		isPublic,
+		setValues,
+		setError,
+		error,
+		isEditorOpen,
+		isPreviewOpen,
+	} = useEditorStore();
+
+	useEffect(() => {
+		setValues({
+			title: initTitle,
+			content: initContent,
+			categoryName: initCategoryName,
+			isPublic: initIsPublic,
+			serializedContent: initSerializedContent,
+		});
+	}, [
+		initTitle,
+		initContent,
+		initCategoryName,
+		initIsPublic,
+		initSerializedContent,
+	]);
 
 	const handleInput = async (event) => {
-		setContent(event.target.value);
+		setValues({ content: event.target.value });
 		try {
 			const mdx = await serialize(event.target.value);
-			setSerialized(mdx);
-			setNoteError(errorTypes.none);
+			setValues({ serializedContent: mdx });
+			setError(errorTypes.none);
 		} catch (e) {
-			setNoteError(errorTypes.serialize);
+			setError(errorTypes.serialize);
 		}
 	};
 
-	const validate = ({ isPublic, categoryName }) => {
+	const validate = async () => {
 		const categoryObj = categories.find((cat) => cat.name === categoryName);
-		console.log('validate', categories, categoryObj);
-		console.log(categoryObj, categories);
+		console.log('validate', isPublic);
 		if (isPublic && !categoryObj.public) {
-			setNoteError(errorTypes.category);
+			setError(errorTypes.category);
 			return;
 		}
-		setNoteError(errorTypes.none);
+		if (title === '') {
+			setError(errorTypes.emptyTitle);
+			return;
+		}
+		await setError(errorTypes.none);
 	};
 
-	const saveHandler = async ({ title, isPublic, categoryName }) => {
-		if (title === '') {
-			setNoteError(errorTypes.emptyTitle);
-			return;
-		}
+	const saveHandler = async () => {
+		validate();
 		if (noteError === errorTypes.none) {
 			try {
 				const insertedId = await db.collection('notes').insertOne({
@@ -72,22 +89,14 @@ export const Editor = ({
 				});
 				console.log(insertedId);
 			} catch (error) {
-				setIsSaveError(true);
+				setError(errorTypes.savingError);
 			}
-		} else {
-			setIsSaveError(true);
 		}
 	};
 
 	return (
 		<div className={styles.container}>
-			<Header
-				saveHandler={saveHandler}
-				noteError={noteError}
-				isSaveError={isSaveError}
-				validate={validate}
-				{...{ isEditorOpen, setIsEditorOpen, isPreviewOpen, setIsPreviewOpen }}
-			/>
+			<Header saveHandler={saveHandler} validate={validate} />
 			<main className={styles.main}>
 				<div
 					className={`${styles.input} ${!isEditorOpen ? styles.closed : ''}`}
@@ -105,10 +114,10 @@ export const Editor = ({
 				<div
 					className={`${styles.output} ${!isPreviewOpen ? styles.closed : ''}`}
 				>
-					{noteError && <Alert>{noteError}</Alert>}
+					{error && <Alert>{error}</Alert>}
 					<div className={styles.renderedOutput}>
-						{serialized && (
-							<MDXRemote {...serialized} components={components} />
+						{serializedContent && (
+							<MDXRemote {...serializedContent} components={components} />
 						)}
 					</div>
 				</div>
