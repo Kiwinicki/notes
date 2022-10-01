@@ -74,10 +74,7 @@ export function Select({
 	return (
 		<div
 			ref={containerRef}
-			onBlur={() => {
-				setIsOpen(false);
-				onBlur();
-			}}
+			onBlur={() => setIsOpen(false)}
 			onClick={() => setIsOpen((prev) => !prev)}
 			tabIndex={0}
 			className={styles.container}

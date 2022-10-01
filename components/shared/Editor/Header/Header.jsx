@@ -6,25 +6,28 @@ import { Input } from '../../Input/Input';
 import { Select } from '../../Select/Select';
 import { IconCheckbox } from '../../IconCheckbox/IconCheckbox';
 import useRealmStore from '../../../../hooks/useRealmStore';
-import { errorTypes } from '../Editor';
+import useNoteStore, { errorTypes } from '../../../../hooks/useNoteStore';
 
 export const Header = ({
 	saveHandler,
 	validate,
-	error,
 	isEditorOpen,
 	toggleIsEditorOpen,
 	isPreviewOpen,
 	toggleIsPreviewOpen,
-	title,
-	setTitle,
-	noteTags,
-	setNoteTags,
-	isPublic,
-	toggleIsPublic,
 }) => {
 	const tags = useRealmStore((state) => state.tags);
-	const [selectedOptions, setSelectedOptions] = useState([]);
+	const { title, noteTags, isPublic, error, setValues } = useNoteStore(
+		({ title, noteTags, isPublic, error, setValues }) => ({
+			title,
+			noteTags,
+			isPublic,
+			error,
+			setValues,
+		})
+	);
+
+	// all options for Select
 	const [allOptions, setAllOptions] = useState([]);
 	useEffect(() => {
 		if (tags) {
@@ -36,22 +39,24 @@ export const Header = ({
 		}
 	}, [tags]);
 
+	// initial selected options for Select
+	const [selectedOptions, setSelectedOptions] = useState([]);
 	useEffect(() => {
-		const init = allOptions.filter((opt) =>
-			noteTags.find((tagName) => tagName === opt.value)
-		);
-		setSelectedOptions(init);
+		if (allOptions.length) {
+			const initSelected = allOptions.filter((tag) =>
+				noteTags.includes(tag.value)
+			);
+			setSelectedOptions(initSelected);
+		}
 	}, [allOptions]);
 
+	// synchronize selected options with noteTags state
 	useEffect(() => {
-		const values = selectedOptions.map((opt) => opt.value);
-		setNoteTags(values);
-	}, [selectedOptions, setNoteTags]);
-
-	// const [defaultChecked, setDefaultChecked] = useState(null);
-	// useEffect(() => {
-	// 	setDefaultChecked(isPublic);
-	// }, []);
+		if (selectedOptions.length > 0) {
+			const values = selectedOptions.map((opt) => opt.value);
+			setValues({ noteTags: values });
+		}
+	}, [selectedOptions]);
 
 	return (
 		<header className={styles.container}>
@@ -82,35 +87,33 @@ export const Header = ({
 						placeholder="Tytuł notatki"
 						title="Tytuł notatki"
 						value={title}
-						onChange={(e) => setTitle(e.target.value)}
+						onChange={(e) => setValues({ title: e.target.value })}
 						{...(error === errorTypes.emptyTitle && { error: true })}
 					/>
 				</div>
 				<div className={styles.switch}>
 					<Switch
 						value={isPublic}
-						onChange={toggleIsPublic}
+						onChange={(e) => setValues({ isPublic: e.target.value })}
 						title="Status notatki"
-						// {...(defaultChecked && { defaultChecked: true })}
 					/>
 					<label>{isPublic ? 'Publiczna' : 'Prywatna'}</label>
 				</div>
 				<Select
 					multiple
 					value={selectedOptions}
-					onChange={(tagArr) => {
-						console.log(tagArr);
-						setSelectedOptions(tagArr);
-					}}
+					onChange={setSelectedOptions}
 					options={allOptions}
 					title="Lista tagów"
-					onBlur={validate}
 				/>
 				<Button
 					type="submit"
 					{...(error && { disabled: true })}
 					error={error}
-					onClick={saveHandler}
+					onClick={(ev) => {
+						ev.preventDefault();
+						saveHandler();
+					}}
 				>
 					Zapisz
 				</Button>

@@ -3,50 +3,30 @@ import styles from './Editor.module.scss';
 import { Header } from './Header/Header';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
-import { Alert } from '..//Alert/Alert';
+import { Alert } from '../Alert/Alert';
 import { components } from '../../mdx/allComponents';
 import useRealmStore from '../../../hooks/useRealmStore';
 import { useToggle } from '../../../hooks/useToggle';
-
-export const errorTypes = {
-	none: false,
-	serialize: 'Problem z MDX',
-	tag: 'Ustawiono notatkę jako publiczną i dodano prywatny tag',
-	emptyTitle: 'Brak tytułu notatki',
-	savingError: 'Błąd podczas zapisywania notatki',
-	emptyTag: 'Nie dodano żadnego tagu',
-};
+import useNoteStore from '../../../hooks/useNoteStore';
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
-export const Editor = ({
-	saveHandler,
-	content: initContent = '',
-	title: initTitle = '',
-	tags: initNoteTags = [],
-	isPublic: initIsPublic = false,
-}) => {
+export const Editor = ({ saveHandler }) => {
 	const tags = useRealmStore((state) => state.tags);
-
-	const [error, setError] = useState(errorTypes.none);
-	const [content, setContent] = useState(initContent);
-	const [title, setTitle] = useState(initTitle);
-	const [noteTags, setNoteTags] = useState(initNoteTags);
-	const [isPublic, toggleIsPublic] = useToggle(initIsPublic);
+	const { title, content, noteTags, isPublic, error, setValues } = useNoteStore(
+		({ title, content, noteTags, isPublic, error, setValues }) => ({
+			title,
+			content,
+			noteTags,
+			isPublic,
+			error,
+			setValues,
+		})
+	);
 
 	const [serializedContent, setSerializedContent] = useState(null);
-
 	const [isEditorOpen, toggleIsEditorOpen] = useToggle(true);
 	const [isPreviewOpen, toggleIsPreviewOpen] = useToggle(true);
-
-	useEffect(() => {
-		console.log('init public', initIsPublic);
-	}, [initIsPublic]);
-	console.log('public', isPublic);
-
-	useEffect(() => {
-		setNoteTags(initNoteTags);
-	}, [initNoteTags]);
 
 	useEffect(() => {
 		(async () => {
@@ -58,17 +38,18 @@ export const Editor = ({
 	}, []);
 
 	const handleInput = async (event) => {
-		setContent(event.target.value);
+		setValues(event.target.value);
 		try {
 			const mdx = await serialize(event.target.value);
 			setSerializedContent(mdx);
-			setError(errorTypes.none);
+			setValues({ error: errorTypes.none });
 		} catch (err) {
 			console.error(err);
-			setError(errorTypes.serialize);
+			setValues({ error: errorTypes.serialize });
 		}
 	};
 
+	// TODO: working validation
 	const validate = async () => {
 		console.log('validation');
 		const isAllTagsPublic = noteTags.every((tagName) => {
@@ -92,35 +73,15 @@ export const Editor = ({
 		}
 	};
 
-	const checkBeforeSubmit = (ev, saveHandler) => {
-		ev.preventDefault();
-		validate();
-		if (!error) {
-			try {
-				saveHandler({ title, content, tags: noteTags, isPublic });
-			} catch (error) {
-				setError(errorTypes.savingError);
-			}
-		}
-	};
-
 	return (
 		<div className={styles.container}>
 			<Header
 				{...{
-					saveHandler: (ev) => checkBeforeSubmit(ev, saveHandler),
-					validate,
-					error,
+					saveHandler,
 					isEditorOpen,
 					toggleIsEditorOpen,
 					isPreviewOpen,
 					toggleIsPreviewOpen,
-					title,
-					setTitle,
-					noteTags,
-					setNoteTags,
-					isPublic,
-					toggleIsPublic,
 				}}
 			/>
 			<main className={styles.main}>
