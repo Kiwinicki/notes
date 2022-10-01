@@ -3,29 +3,17 @@ import useRealmStore from '../hooks/useRealmStore';
 import { useEffect } from 'react';
 
 function MyApp({ Component, pageProps }) {
-	const { logIn, initDb, getNotes, getCategories, db } = useRealmStore(
-		({ logIn, initDb, getNotes, getCategories, db }) => ({
-			logIn,
-			initDb,
-			getNotes,
-			getCategories,
-			db,
-		})
-	);
+	const logIn = useRealmStore((state) => state.logIn);
+	const initDb = useRealmStore((state) => state.initDb);
+	const getInitData = useRealmStore((state) => state.getInitData);
 
 	useEffect(() => {
 		(async () => {
 			await logIn({});
-			await initDb();
+			initDb();
+			await getInitData();
 		})();
 	}, []);
-
-	useEffect(() => {
-		if (db) {
-			getNotes();
-			getCategories();
-		}
-	}, [db]);
 
 	return <Component {...pageProps} />;
 }

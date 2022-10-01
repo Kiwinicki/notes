@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Header.module.scss';
 import { Button, ButtonLink } from '../../Button/Button';
 import { Switch } from '../../Switch/Switch';
@@ -6,29 +6,52 @@ import { Input } from '../../Input/Input';
 import { Select } from '../../Select/Select';
 import { IconCheckbox } from '../../IconCheckbox/IconCheckbox';
 import useRealmStore from '../../../../hooks/useRealmStore';
-import useEditorStore, { errorTypes } from '../useEditorStore';
+import { errorTypes } from '../Editor';
 
-export const Header = ({ saveHandler, validate }) => {
-	const categories = useRealmStore((state) => state.categories);
-	const categoriesOptions = categories.map((cat) => ({
-		value: cat.name,
-		name: `${cat.name} (${cat.public ? 'publiczna' : 'prywatna'})`,
-	}));
-
-	const {
-		title,
-		categoryName,
-		isPublic,
-		setValues,
-		error,
-		isEditorOpen,
-		isPreviewOpen,
-		toggle,
-	} = useEditorStore();
+export const Header = ({
+	saveHandler,
+	validate,
+	error,
+	isEditorOpen,
+	toggleIsEditorOpen,
+	isPreviewOpen,
+	toggleIsPreviewOpen,
+	title,
+	setTitle,
+	noteTags,
+	setNoteTags,
+	isPublic,
+	toggleIsPublic,
+}) => {
+	const tags = useRealmStore((state) => state.tags);
+	const [selectedOptions, setSelectedOptions] = useState([]);
+	const [allOptions, setAllOptions] = useState([]);
+	useEffect(() => {
+		if (tags) {
+			const all = tags.map((tag) => ({
+				value: tag.name,
+				label: `${tag.name} (${tag.isPublic ? 'publiczna' : 'prywatna'})`,
+			}));
+			setAllOptions(all);
+		}
+	}, [tags]);
 
 	useEffect(() => {
-		!categoryName && setValues({ categoryName: categories[0].name });
-	}, []);
+		const init = allOptions.filter((opt) =>
+			noteTags.find((tagName) => tagName === opt.value)
+		);
+		setSelectedOptions(init);
+	}, [allOptions]);
+
+	useEffect(() => {
+		const values = selectedOptions.map((opt) => opt.value);
+		setNoteTags(values);
+	}, [selectedOptions, setNoteTags]);
+
+	// const [defaultChecked, setDefaultChecked] = useState(null);
+	// useEffect(() => {
+	// 	setDefaultChecked(isPublic);
+	// }, []);
 
 	return (
 		<header className={styles.container}>
@@ -36,27 +59,20 @@ export const Header = ({ saveHandler, validate }) => {
 				<IconCheckbox
 					title="Edytor"
 					value={isEditorOpen}
-					onChange={() => toggle('isEditorOpen')}
+					onChange={toggleIsEditorOpen}
 				>
 					<EditIcon />
 				</IconCheckbox>
 				<IconCheckbox
 					title="Podgląd"
 					value={isPreviewOpen}
-					onChange={() => toggle('isPreviewOpen')}
+					onChange={toggleIsPreviewOpen}
 				>
 					<PreviewIcon />
 				</IconCheckbox>
 			</div>
 
-			<form
-				// onSubmit={handleSubmit(saveHandler)}
-				onChange={() => {
-					// const formState = getValues();
-					validate();
-				}}
-				className={styles.form}
-			>
+			<form onChange={validate} className={styles.form}>
 				<div className={styles.titleContainer}>
 					<label htmlFor="title" className="srOnly">
 						Tytuł notatki
@@ -66,28 +82,29 @@ export const Header = ({ saveHandler, validate }) => {
 						placeholder="Tytuł notatki"
 						title="Tytuł notatki"
 						value={title}
-						name="title"
-						onChange={(e) => setValues({ title: e.target.value })}
-						// {...register('title', { required: true })}
-						{...(errorTypes.emptyTitle === error && { error: true })}
+						onChange={(e) => setTitle(e.target.value)}
+						{...(error === errorTypes.emptyTitle && { error: true })}
 					/>
 				</div>
 				<div className={styles.switch}>
 					<Switch
-						name="isPublic"
 						value={isPublic}
-						onChange={() => toggle('isPublic')}
+						onChange={toggleIsPublic}
 						title="Status notatki"
+						// {...(defaultChecked && { defaultChecked: true })}
 					/>
 					<label>{isPublic ? 'Publiczna' : 'Prywatna'}</label>
 				</div>
 				<Select
-					name="categoryName"
-					value={categoryName}
-					onChange={(e) => setValues({ categoryName: e.target.value })}
-					// {...register('categoryName', { required: true })}
-					options={categoriesOptions}
-					title="Kategoria notatki"
+					multiple
+					value={selectedOptions}
+					onChange={(tagArr) => {
+						console.log(tagArr);
+						setSelectedOptions(tagArr);
+					}}
+					options={allOptions}
+					title="Lista tagów"
+					onBlur={validate}
 				/>
 				<Button
 					type="submit"

@@ -42,9 +42,9 @@ export const Home = () => {
 	}, [router.query, notes, db]);
 
 	return (
-		<section className={styles.notes}>
+		<main className={styles.notes}>
 			{matchingNotes &&
 				matchingNotes.map((note, i) => <Note {...note} key={i} />)}
-		</section>
+		</main>
 	);
 };

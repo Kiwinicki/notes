@@ -54,8 +54,15 @@ export const Header = () => {
 				</form>
 				<div className={styles.searchResults}>
 					{searchResults.length > 0 ? (
-						searchResults.map(({ title, _id }, i) => (
-							<Link href={`/note/${_id.toString()}`} key={i}>
+						searchResults.map(({ title, content, tags, isPublic, _id }, i) => (
+							<Link
+								href={{
+									pathname: `/note/${_id.toString()}`,
+									query: { title, content, tags, isPublic },
+								}}
+								as={`/note/${_id.toString()}`}
+								key={i}
+							>
 								{title}
 							</Link>
 						))
@@ -66,7 +73,7 @@ export const Header = () => {
 			</div>
 			{userType === userTypes.admin ? (
 				<div className={styles.btnsContainer}>
-					<ButtonLink href="/edytor">Dodaj notatkę</ButtonLink>
+					<ButtonLink href="/new">Dodaj notatkę</ButtonLink>
 					<Button onClick={() => switchUser({})}>Wyloguj</Button>
 				</div>
 			) : (

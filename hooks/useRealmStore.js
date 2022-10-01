@@ -22,7 +22,6 @@ const useRealmStore = create((set, get) => ({
 
 		try {
 			const user = await app.logIn(credentials);
-			console.log(user.id);
 			set({
 				user: app.currentUser,
 				userType: withLoginAndPasswd ? userTypes.admin : userTypes.visitor,
@@ -45,39 +44,41 @@ const useRealmStore = create((set, get) => ({
 		}
 	},
 	db: null,
-	initDb: () =>
-		set(({ user }) => {
-			if (user !== null) {
-				const realmService = user.mongoClient('mongodb-atlas');
-				return { db: realmService.db('second-brain') };
-			}
-		}),
-
-	notes: null,
-	categories: null,
-	getNotes: async () => {
-		try {
-			const notes = await get().db.collection('notes').find();
-			set({ notes });
-		} catch (err) {
-			console.error(err);
+	initDb: () => {
+		if (get().user !== null) {
+			const realmService = get().user.mongoClient('mongodb-atlas');
+			set({ db: realmService.db('second-brain') });
+		} else {
+			console.error("Couldn't initialize database without user logged in");
 		}
 	},
-	getCategories: async () => {
+	notes: null,
+	tags: null,
+	getInitData: async () => {
 		try {
-			const categories = await get().db.collection('categories').find();
-			set({ categories });
+			if (get().user) {
+				const { notes, tags } = await get().user.functions.getInitData();
+				set({ notes, tags });
+			}
 		} catch (err) {
 			console.error(err);
 		}
 	},
 	switchUser: async (loginInfo) => {
-		const resp = await get().logIn(loginInfo);
-		get().app.switchUser(app.currentUser);
-		get().initDb();
-		get().getCategories();
-		get().getNotes();
-		return resp;
+		try {
+			const resp = await get().logIn(loginInfo);
+			get().app.switchUser(app.currentUser);
+			get().initDb();
+			get().getInitData();
+			return resp;
+		} catch (err) {
+			console.error(err);
+		}
+	},
+	initApp: async () => {
+		await logIn({});
+		initDb();
+		await getInitData();
 	},
 }));
 

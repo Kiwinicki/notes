@@ -1,20 +1,116 @@
+@use 'sass:color';
 @use '../../../styles/vars' as *;
 @use '../../../styles/mixins' as *;
 
-.select {
+.container {
 	@include border;
-	background-color: $bg;
-	color: $on-bg;
-	padding: 10px;
-	height: 40px;
-	font-weight: 600;
-	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	background-image: url('./ChevronDown.svg');
-	background-size: 1rem;
-	background-repeat: no-repeat;
-	background-position: calc(100% - 10px);
-	display: inline-block;
 	position: relative;
+	min-width: 10rem;
+	width: min-content;
+	min-height: 1.5em;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding: 10px;
+	outline: none;
+	&:focus {
+		border-color: white;
+	}
+}
+
+.value {
+	flex-grow: 1;
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.clear-btn {
+	background: none;
+	color: $surface;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 0;
+	font-size: 1.5rem;
+	line-height: 1rem;
+	font-weight: 700;
+	&:focus,
+	&:hover {
+		color: $on-bg;
+	}
+}
+
+.divider {
+	background-color: $surface;
+	align-self: stretch;
+	width: 2px;
+	min-width: 2px;
+}
+
+.caret {
+	translate: 0 25%;
+	border: 0.4em solid transparent;
+	border-top-color: $surface;
+}
+
+.options {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: none;
+	overflow-y: auto;
+	@include border;
+	width: 100%;
+	left: 0;
+	top: calc(100% + 0.25em);
+	background-color: white;
+	z-index: 100;
+	&.show {
+		display: block;
+	}
+}
+
+.option {
+	padding: 0.25em 0.5em;
+	cursor: pointer;
+	color: $bg;
+	&.selected {
+		background-color: $primary;
+		color: $on-primary;
+	}
+
+	&.highlighted {
+		background-color: $primary-variant;
+		color: $on-primary;
+	}
+}
+
+.option-badge {
+	display: flex;
+	align-items: center;
+	@include border;
+	padding: 0.15em 0.25em;
+	gap: 0.25em;
+	cursor: pointer;
+	background: none;
+	outline: none;
+	color: $on-bg;
+	&:hover,
+	&:focus {
+		background-color: color.scale($error, $lightness: -70%);
+		border-color: $error;
+		color: $on-error;
+	}
+
+	&:hover > .remove-btn,
+	&:focus > .remove-btn {
+		color: $error;
+	}
+
+	& > .remove-btn {
+		font-size: 1.25em;
+		color: $surface;
+	}
 }

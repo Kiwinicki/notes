@@ -1,6 +1,6 @@
 @use '../../../../styles/vars' as *;
 
-.categories {
+.tags {
 	display: flex;
 	flex-direction: column;
 	width: fit-content;
@@ -8,4 +8,10 @@
 	border-right: $border;
 	padding: 1rem;
 	gap: 1rem;
+	max-width: 25vw;
+	& * {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Editor.module.scss';
 import { Header } from './Header/Header';
 import { MDXRemote } from 'next-mdx-remote';
@@ -6,88 +6,98 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { Alert } from '..//Alert/Alert';
 import { components } from '../../mdx/allComponents';
 import useRealmStore from '../../../hooks/useRealmStore';
-import useEditorStore, { errorTypes } from './useEditorStore';
+import { useToggle } from '../../../hooks/useToggle';
+
+export const errorTypes = {
+	none: false,
+	serialize: 'Problem z MDX',
+	tag: 'Ustawiono notatkę jako publiczną i dodano prywatny tag',
+	emptyTitle: 'Brak tytułu notatki',
+	savingError: 'Błąd podczas zapisywania notatki',
+	emptyTag: 'Nie dodano żadnego tagu',
+};
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
 export const Editor = ({
-	title: initTitle = '',
+	saveHandler,
 	content: initContent = '',
-	serializedContent: initSerializedContent = '',
-	categoryName: initCategoryName = '',
-	public: initIsPublic = false,
+	title: initTitle = '',
+	tags: initNoteTags = [],
+	isPublic: initIsPublic = false,
 }) => {
-	const db = useRealmStore((state) => state.db);
-	const categories = useRealmStore((state) => state.categories);
+	const tags = useRealmStore((state) => state.tags);
 
-	console.log('initPUblic', initIsPublic);
+	const [error, setError] = useState(errorTypes.none);
+	const [content, setContent] = useState(initContent);
+	const [title, setTitle] = useState(initTitle);
+	const [noteTags, setNoteTags] = useState(initNoteTags);
+	const [isPublic, toggleIsPublic] = useToggle(initIsPublic);
 
-	const {
-		title,
-		content,
-		serializedContent,
-		categoryName,
-		isPublic,
-		setValues,
-		setError,
-		error,
-		isEditorOpen,
-		isPreviewOpen,
-	} = useEditorStore();
+	const [serializedContent, setSerializedContent] = useState(null);
+
+	const [isEditorOpen, toggleIsEditorOpen] = useToggle(true);
+	const [isPreviewOpen, toggleIsPreviewOpen] = useToggle(true);
 
 	useEffect(() => {
-		setValues({
-			title: initTitle,
-			content: initContent,
-			categoryName: initCategoryName,
-			isPublic: initIsPublic,
-			serializedContent: initSerializedContent,
-		});
-	}, [
-		initTitle,
-		initContent,
-		initCategoryName,
-		initIsPublic,
-		initSerializedContent,
-	]);
+		console.log('init public', initIsPublic);
+	}, [initIsPublic]);
+	console.log('public', isPublic);
+
+	useEffect(() => {
+		setNoteTags(initNoteTags);
+	}, [initNoteTags]);
+
+	useEffect(() => {
+		(async () => {
+			if (content) {
+				const mdx = await serialize(content);
+				setSerializedContent(mdx);
+			}
+		})();
+	}, []);
 
 	const handleInput = async (event) => {
-		setValues({ content: event.target.value });
+		setContent(event.target.value);
 		try {
 			const mdx = await serialize(event.target.value);
-			setValues({ serializedContent: mdx });
+			setSerializedContent(mdx);
 			setError(errorTypes.none);
-		} catch (e) {
+		} catch (err) {
+			console.error(err);
 			setError(errorTypes.serialize);
 		}
 	};
 
 	const validate = async () => {
-		const categoryObj = categories.find((cat) => cat.name === categoryName);
-		console.log('validate', isPublic);
-		if (isPublic && !categoryObj.public) {
-			setError(errorTypes.category);
-			return;
+		console.log('validation');
+		const isAllTagsPublic = noteTags.every((tagName) => {
+			const tagObj = tags.find((tag) => tag.name === tagName);
+			return tagObj.isPublic;
+		});
+		switch (true) {
+			// TODO: if some tag is private and note is set to public
+			case isPublic && !isAllTagsPublic:
+				setError(errorTypes.category);
+				break;
+			case noteTags.length == 0:
+				setError(errorTypes.emptyTag);
+				break;
+			case title === '':
+				setError(errorTypes.emptyTitle);
+				break;
+			default:
+				setError(errorTypes.none);
+				break;
 		}
-		if (title === '') {
-			setError(errorTypes.emptyTitle);
-			return;
-		}
-		await setError(errorTypes.none);
 	};
 
-	const saveHandler = async () => {
+	const checkBeforeSubmit = (ev, saveHandler) => {
+		ev.preventDefault();
 		validate();
-		if (noteError === errorTypes.none) {
+		if (!error) {
 			try {
-				const insertedId = await db.collection('notes').insertOne({
-					public: isPublic,
-					title,
-					content,
-					categoryName,
-					editDate: new Date(),
-				});
-				console.log(insertedId);
+				saveHandler({ title, content, tags: noteTags, isPublic });
 			} catch (error) {
 				setError(errorTypes.savingError);
 			}
@@ -96,7 +106,23 @@ export const Editor = ({
 
 	return (
 		<div className={styles.container}>
-			<Header saveHandler={saveHandler} validate={validate} />
+			<Header
+				{...{
+					saveHandler: (ev) => checkBeforeSubmit(ev, saveHandler),
+					validate,
+					error,
+					isEditorOpen,
+					toggleIsEditorOpen,
+					isPreviewOpen,
+					toggleIsPreviewOpen,
+					title,
+					setTitle,
+					noteTags,
+					setNoteTags,
+					isPublic,
+					toggleIsPublic,
+				}}
+			/>
 			<main className={styles.main}>
 				<div
 					className={`${styles.input} ${!isEditorOpen ? styles.closed : ''}`}
