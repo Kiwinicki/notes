@@ -1,28 +1,10 @@
 @use '../../../styles/vars' as *;
 
-.switch {
+.container {
 	position: relative;
 	display: inline-block;
 	width: 60px;
 	height: 30px;
-	& input {
-		cursor: pointer;
-		opacity: 0;
-		width: 60px;
-		height: 30px;
-		position: absolute;
-		z-index: 1;
-		margin: 0;
-		&:checked + span {
-			background-color: $primary;
-			&::before {
-				transform: translateX(30px);
-			}
-		}
-		&:focus + span {
-			border: 2px solid white;
-		}
-	}
 	& span {
 		position: absolute;
 		cursor: pointer;
@@ -47,4 +29,27 @@
 			border-radius: 50%;
 		}
 	}
+}
+
+.input {
+	cursor: pointer;
+	opacity: 0;
+	width: 60px;
+	height: 30px;
+	position: absolute;
+	z-index: 1;
+	margin: 0;
+
+	&.checked + span {
+		background-color: $primary;
+		&::before {
+			transform: translateX(30px);
+		}
+	}
+	&:focus + span {
+		border: 2px solid white;
+	}
+}
+
+.checked {
 }

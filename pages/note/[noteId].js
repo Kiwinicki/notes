@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { BSON } from 'realm-web';
@@ -30,39 +30,70 @@ export default function NotePage() {
 	}
 
 	const setValues = useNoteStore((state) => state.setValues);
+	const clearStore = useNoteStore((state) => state.clearStore);
 
 	const userType = useRealmStore((state) => state.userType);
 	const db = useRealmStore((state) => state.db);
 
 	const [status, setStatus] = useState(statusTypes.loading);
 
-	useEffect(() => {
-		console.log('tags from query: ', noteTags);
-	}, []);
+	const fetchNoteData = useCallback(async () => {
+		try {
+			const {
+				title,
+				content,
+				tags: noteTags,
+				isPublic,
+			} = await db.collection('notes').findOne({ _id: ObjectId(noteId) });
+			setValues({
+				noteId,
+				title,
+				content,
+				noteTags,
+				isPublic,
+			});
+			setStatus(statusTypes.success);
+		} catch (err) {
+			console.error(err);
+			setStatus(statusTypes.error);
+		}
+	}, [db, noteId, setValues]);
 
 	useEffect(() => {
 		(async () => {
 			if (db && !title && !content) {
-				try {
-					const {
-						title,
-						content,
-						tags: noteTags,
-						isPublic,
-					} = await db.collection('notes').findOne({ _id: ObjectId(noteId) });
-					console.log('tags from mongodb: ', noteTags);
-					setValues({ title, content, noteTags, isPublic });
-					setStatus(statusTypes.success);
-				} catch (err) {
-					console.warn(err);
-					setStatus(statusTypes.error);
-				}
+				await fetchNoteData();
 			} else {
-				setValues({ title, content, noteTags, isPublic });
-				setStatus(statusTypes.success);
+				if (userType === userTypes.admin && typeof isPublic !== 'boolean') {
+					await fetchNoteData();
+				} else {
+					setValues({ noteId, title, content, noteTags, isPublic });
+					setStatus(statusTypes.success);
+				}
 			}
 		})();
-	}, [db, router.query]);
+	}, [
+		content,
+		db,
+		fetchNoteData,
+		isPublic,
+		noteId,
+		noteTags,
+		router.query,
+		setValues,
+		title,
+		userType,
+	]);
+
+	useEffect(() => {
+		const exitingFunction = () => clearStore();
+
+		router.events.on('routeChangeStart', exitingFunction);
+
+		return () => {
+			router.events.off('routeChangeStart', exitingFunction);
+		};
+	}, []);
 
 	return (
 		<>

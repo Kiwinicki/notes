@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import styles from './NoteForVisitor.module.scss';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Layout } from '../../shared/Layout/Layout';
 import { components } from '../../mdx/allComponents';
 import useNoteStore from '../../../hooks/useNoteStore';
+import { ButtonLink } from '../../shared/Button/Button';
 
 export const NoteForVisitor = () => {
 	const { title, content, noteTags } = useNoteStore();
@@ -21,16 +23,17 @@ export const NoteForVisitor = () => {
 
 	return (
 		<Layout>
-			<section>
-				<p>Tytuł: {title}</p>
-				<p>
+			<main className={styles.main}>
+				<p className={styles.title}>{title}</p>
+				<p className={styles.tags}>
 					tagi:
-					{noteTags.map((tagName, i) => (
-						<span key={i}> #{tagName}</span>
-					))}
+					{noteTags &&
+						noteTags.map((tagName, i) => (
+							<ButtonLink key={i}>#{tagName}</ButtonLink>
+						))}
 				</p>
 				{serialized && <MDXRemote {...serialized} components={components} />}
-			</section>
+			</main>
 		</Layout>
 	);
 };

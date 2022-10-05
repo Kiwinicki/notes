@@ -5,7 +5,7 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { components } from '../../mdx/allComponents';
 import Link from 'next/link';
 
-export const Note = ({ title, content, tags, isPublic, _id }) => {
+export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 	const [serializedContent, setSerializedContent] = useState(null);
 
 	useEffect(() => {
@@ -20,29 +20,31 @@ export const Note = ({ title, content, tags, isPublic, _id }) => {
 			}}
 			as={`/note/${_id.toString()}`}
 		>
-			<article className={styles.note}>
-				<h2 className={styles.title}>{title}</h2>
-				<div className={styles.content}>
-					{serializedContent && (
-						<MDXRemote {...serializedContent} components={components} />
-					)}
-				</div>
-				<div className={styles.bottom}>
-					{/* TODO: filter by tag onClick? */}
-					<div className={styles.tagList}>
-						{tags.length > 0 &&
-							tags.map((tag, i) => (
-								<div className={styles.tag} key={i}>
-									#{tag}
-								</div>
-							))}
+			<a href={`/note/${_id.toString()}`}>
+				<article className={styles.note}>
+					<h2 className={styles.title}>{title}</h2>
+					<div className={styles.content}>
+						{serializedContent && (
+							<MDXRemote {...serializedContent} components={components} />
+						)}
 					</div>
-					{/* TODO: remove note onClick */}
-					<button className={styles.removeButton}>
-						<TrashIcon />
-					</button>
-				</div>
-			</article>
+					<div className={styles.bottom}>
+						{/* TODO: filter by tag onClick? */}
+						<div className={styles.tagList}>
+							{tags.length > 0 &&
+								tags.map((tag, i) => (
+									<div className={styles.tag} key={i}>
+										#{tag}
+									</div>
+								))}
+						</div>
+						{/* TODO: remove note onClick */}
+						<button className={styles.removeButton}>
+							<TrashIcon />
+						</button>
+					</div>
+				</article>
+			</a>
 		</Link>
 	);
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Header.module.scss';
 import { Button, ButtonLink } from '../../Button/Button';
 import { Switch } from '../../Switch/Switch';
@@ -17,15 +17,13 @@ export const Header = ({
 	toggleIsPreviewOpen,
 }) => {
 	const tags = useRealmStore((state) => state.tags);
-	const { title, noteTags, isPublic, error, setValues } = useNoteStore(
-		({ title, noteTags, isPublic, error, setValues }) => ({
-			title,
-			noteTags,
-			isPublic,
-			error,
-			setValues,
-		})
-	);
+
+	const title = useNoteStore((state) => state.title);
+	const noteTags = useNoteStore((state) => state.noteTags);
+	const isPublic = useNoteStore((state) => state.isPublic);
+	const error = useNoteStore((state) => state.error);
+	const setValues = useNoteStore((state) => state.setValues);
+	const toggleIsPublic = useNoteStore((state) => state.toggleIsPublic);
 
 	// all options for Select
 	const [allOptions, setAllOptions] = useState([]);
@@ -94,7 +92,10 @@ export const Header = ({
 				<div className={styles.switch}>
 					<Switch
 						value={isPublic}
-						onChange={(e) => setValues({ isPublic: e.target.value })}
+						onChange={() => {
+							console.log('switch change');
+							toggleIsPublic();
+						}}
 						title="Status notatki"
 					/>
 					<label>{isPublic ? 'Publiczna' : 'Prywatna'}</label>
@@ -109,7 +110,7 @@ export const Header = ({
 				<Button
 					type="submit"
 					{...(error && { disabled: true })}
-					error={error}
+					error={!!error}
 					onClick={(ev) => {
 						ev.preventDefault();
 						saveHandler();

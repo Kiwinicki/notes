@@ -10,14 +10,17 @@ export const Switch = React.forwardRef(
 			} else {
 				setIsDefaultChecked(value);
 			}
-		}, []);
+		}, [defaultChecked]);
 
 		return (
-			<div className={styles.switch}>
+			<div className={styles.container}>
 				<input
+					className={`${styles.input} ${value ? styles.checked : ''}`}
+					value={value}
 					type="checkbox"
 					{...props}
 					ref={ref}
+					onChange={onChange}
 					{...(isDefaultChecked && { defaultChecked: true })}
 				/>
 				<span></span>

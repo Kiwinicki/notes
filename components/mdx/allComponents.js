@@ -1,4 +1,4 @@
-import { code } from './code';
+import { code } from './code/code';
 
 export const components = {
 	code,

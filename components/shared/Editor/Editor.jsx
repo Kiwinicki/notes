@@ -7,22 +7,19 @@ import { Alert } from '../Alert/Alert';
 import { components } from '../../mdx/allComponents';
 import useRealmStore from '../../../hooks/useRealmStore';
 import { useToggle } from '../../../hooks/useToggle';
-import useNoteStore from '../../../hooks/useNoteStore';
+import useNoteStore, { errorTypes } from '../../../hooks/useNoteStore';
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
 export const Editor = ({ saveHandler }) => {
 	const tags = useRealmStore((state) => state.tags);
-	const { title, content, noteTags, isPublic, error, setValues } = useNoteStore(
-		({ title, content, noteTags, isPublic, error, setValues }) => ({
-			title,
-			content,
-			noteTags,
-			isPublic,
-			error,
-			setValues,
-		})
-	);
+
+	const title = useNoteStore((state) => state.title);
+	const content = useNoteStore((state) => state.content);
+	const noteTags = useNoteStore((state) => state.noteTags);
+	const isPublic = useNoteStore((state) => state.isPublic);
+	const error = useNoteStore((state) => state.error);
+	const setValues = useNoteStore((state) => state.setValues);
 
 	const [serializedContent, setSerializedContent] = useState(null);
 	const [isEditorOpen, toggleIsEditorOpen] = useToggle(true);
@@ -38,16 +35,21 @@ export const Editor = ({ saveHandler }) => {
 	}, []);
 
 	const handleInput = async (event) => {
-		setValues(event.target.value);
-		try {
-			const mdx = await serialize(event.target.value);
-			setSerializedContent(mdx);
-			setValues({ error: errorTypes.none });
-		} catch (err) {
-			console.error(err);
-			setValues({ error: errorTypes.serialize });
-		}
+		setValues({ content: event.target.value });
 	};
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const mdx = await serialize(content);
+				setSerializedContent(mdx);
+				setValues({ error: errorTypes.none });
+			} catch (err) {
+				console.error(err);
+				setValues({ error: errorTypes.serialize });
+			}
+		})();
+	}, [content]);
 
 	// TODO: working validation
 	const validate = async () => {
