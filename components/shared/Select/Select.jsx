@@ -7,6 +7,7 @@ export function Select({
 	onChange,
 	onBlur,
 	options,
+	error,
 	...rest
 }) {
 	const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +78,7 @@ export function Select({
 			onBlur={() => setIsOpen(false)}
 			onClick={() => setIsOpen((prev) => !prev)}
 			tabIndex={0}
-			className={styles.container}
+			className={`${styles.container} ${error ? styles.error : ''}`}
 			{...rest}
 		>
 			<span className={styles.value}>

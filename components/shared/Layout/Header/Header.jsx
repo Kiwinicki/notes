@@ -40,6 +40,7 @@ export const Header = () => {
 						Router.push({
 							pathname: '/',
 							query: { phrase: ev.target[0].value },
+							// TODO: filtering by category
 							// query: { category: ev.target[0].value },
 							// query: { phrase_and_category: ev.target[0].value },
 						});
@@ -55,14 +56,7 @@ export const Header = () => {
 				<div className={styles.searchResults}>
 					{searchResults.length > 0 ? (
 						searchResults.map(({ title, content, tags, isPublic, _id }, i) => (
-							<Link
-								href={{
-									pathname: `/note/${_id.toString()}`,
-									query: { title, content, tags, isPublic },
-								}}
-								as={`/note/${_id.toString()}`}
-								key={i}
-							>
+							<Link href={`/note/${_id.toString()}`} key={i}>
 								{title}
 							</Link>
 						))

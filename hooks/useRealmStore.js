@@ -114,7 +114,7 @@ const useRealmStore = create(
 					};
 					if (get().db) {
 						try {
-							const insertedId = await get()
+							const { insertedId } = await get()
 								.db.collection('notes')
 								.insertOne(newNote);
 
@@ -127,6 +127,7 @@ const useRealmStore = create(
 							);
 							return insertedId;
 						} catch (err) {
+							// TODO: noteStore savingError
 							console.error(err);
 						}
 					} else {
@@ -134,15 +135,44 @@ const useRealmStore = create(
 					}
 				}
 			},
+			addTag: async ({ name, isPublic }) => {
+				if (typeof name === 'string' && typeof isPublic === 'boolean') {
+					console.log(isPublic);
+					if (get().db) {
+						try {
+							const insertedId = await get()
+								.db.collection('tags')
+								.insertOne({ name, isPublic });
+
+							set(
+								(state) => ({
+									tags: [...state.tags, { name, isPublic, _id: insertedId }],
+								}),
+								false,
+								'realmStore/addTag'
+							);
+							return insertedId;
+						} catch (err) {
+							console.error(err);
+						}
+					} else {
+						throw new Error(
+							'Not provided required tag fields (or fields with wrong types)'
+						);
+					}
+				}
+			},
 			searchNoteById: async (noteId) => {
 				let id = noteId;
 				if (typeof noteId === 'string') id = ObjectId(noteId);
 
-				const noteFromStore = get().notes.find((note) => note._id === id);
+				const notes = get().notes;
+				const noteFromStore =
+					notes && get().notes.find((note) => note._id === id);
 				if (!noteFromStore) {
-					const noteFromDB = await get()
-						.db.collection('notes')
-						.findOne({ _id: id });
+					const db = await get().db;
+					const noteFromDB =
+						db && (await get().db.collection('notes').findOne({ _id: id }));
 
 					if (!noteFromDB) return null;
 					return noteFromDB;

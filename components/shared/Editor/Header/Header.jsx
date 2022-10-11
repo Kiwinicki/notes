@@ -21,7 +21,7 @@ export const Header = ({
 	const title = useNoteStore((state) => state.title);
 	const noteTags = useNoteStore((state) => state.noteTags);
 	const isPublic = useNoteStore((state) => state.isPublic);
-	const error = useNoteStore((state) => state.error);
+	const errors = useNoteStore((state) => state.errors);
 	const setValues = useNoteStore((state) => state.setValues);
 	const toggleIsPublic = useNoteStore((state) => state.toggleIsPublic);
 
@@ -40,21 +40,13 @@ export const Header = ({
 	// initial selected options for Select
 	const [selectedOptions, setSelectedOptions] = useState([]);
 	useEffect(() => {
-		if (allOptions.length) {
+		if (allOptions.length > 0) {
 			const initSelected = allOptions.filter((tag) =>
 				noteTags.includes(tag.value)
 			);
 			setSelectedOptions(initSelected);
 		}
 	}, [allOptions]);
-
-	// synchronize selected options with noteTags state
-	useEffect(() => {
-		if (selectedOptions.length > 0) {
-			const values = selectedOptions.map((opt) => opt.value);
-			setValues({ noteTags: values });
-		}
-	}, [selectedOptions]);
 
 	return (
 		<header className={styles.container}>
@@ -86,16 +78,13 @@ export const Header = ({
 						title="Tytuł notatki"
 						value={title}
 						onChange={(e) => setValues({ title: e.target.value })}
-						{...(error === errorTypes.emptyTitle && { error: true })}
+						{...(errors[errorTypes.emptyTitle] && { error: true })}
 					/>
 				</div>
 				<div className={styles.switch}>
 					<Switch
 						value={isPublic}
-						onChange={() => {
-							console.log('switch change');
-							toggleIsPublic();
-						}}
+						onChange={() => toggleIsPublic()}
 						title="Status notatki"
 					/>
 					<label>{isPublic ? 'Publiczna' : 'Prywatna'}</label>
@@ -103,14 +92,22 @@ export const Header = ({
 				<Select
 					multiple
 					value={selectedOptions}
-					onChange={setSelectedOptions}
+					onChange={(e) => {
+						setSelectedOptions(e);
+						const values = e.map((opt) => opt.value);
+						setValues({ noteTags: values });
+					}}
 					options={allOptions}
 					title="Lista tagów"
+					{...(errors[errorTypes.emptyTag] && { error: true })}
 				/>
 				<Button
 					type="submit"
-					{...(error && { disabled: true })}
-					error={!!error}
+					// if in errors object is any arror disable save button
+					{...(Object.entries(errors).some(([key, val]) => val) && {
+						disabled: true,
+						error: true,
+					})}
 					onClick={(ev) => {
 						ev.preventDefault();
 						saveHandler();

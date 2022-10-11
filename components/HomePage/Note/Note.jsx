@@ -13,13 +13,7 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 	}, [content]);
 
 	return (
-		<Link
-			href={{
-				pathname: `/note/${_id.toString()}`,
-				query: { title, content, tags, isPublic },
-			}}
-			as={`/note/${_id.toString()}`}
-		>
+		<Link href={`/note/${_id.toString()}`}>
 			<a href={`/note/${_id.toString()}`}>
 				<article className={styles.note}>
 					<h2 className={styles.title}>{title}</h2>

@@ -7,7 +7,11 @@ import { Alert } from '../Alert/Alert';
 import { components } from '../../mdx/allComponents';
 import useRealmStore from '../../../hooks/useRealmStore';
 import { useToggle } from '../../../hooks/useToggle';
-import useNoteStore, { errorTypes } from '../../../hooks/useNoteStore';
+import useNoteStore, {
+	errorTypes,
+	errorDescriptions,
+} from '../../../hooks/useNoteStore';
+import { ErrorBoundary } from 'react-error-boundary';
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
@@ -18,8 +22,9 @@ export const Editor = ({ saveHandler }) => {
 	const content = useNoteStore((state) => state.content);
 	const noteTags = useNoteStore((state) => state.noteTags);
 	const isPublic = useNoteStore((state) => state.isPublic);
-	const error = useNoteStore((state) => state.error);
+	const errors = useNoteStore((state) => state.errors);
 	const setValues = useNoteStore((state) => state.setValues);
+	const setError = useNoteStore((state) => state.setError);
 
 	const [serializedContent, setSerializedContent] = useState(null);
 	const [isEditorOpen, toggleIsEditorOpen] = useToggle(true);
@@ -28,52 +33,59 @@ export const Editor = ({ saveHandler }) => {
 	useEffect(() => {
 		(async () => {
 			if (content) {
-				const mdx = await serialize(content);
-				setSerializedContent(mdx);
+				try {
+					const mdx = await serialize(content);
+					setSerializedContent(mdx);
+					setError({ [errorTypes.serialize]: false });
+				} catch (err) {
+					console.error(err);
+					setError({ [errorTypes.serialize]: true });
+				}
 			}
 		})();
 	}, []);
-
-	const handleInput = async (event) => {
-		setValues({ content: event.target.value });
-	};
 
 	useEffect(() => {
 		(async () => {
 			try {
 				const mdx = await serialize(content);
 				setSerializedContent(mdx);
-				setValues({ error: errorTypes.none });
+				setError({ [errorTypes.serialize]: false });
 			} catch (err) {
 				console.error(err);
-				setValues({ error: errorTypes.serialize });
+				setError({ [errorTypes.serialize]: true });
 			}
 		})();
 	}, [content]);
 
-	// TODO: working validation
-	const validate = async () => {
-		console.log('validation');
-		const isAllTagsPublic = noteTags.every((tagName) => {
-			const tagObj = tags.find((tag) => tag.name === tagName);
-			return tagObj.isPublic;
-		});
-		switch (true) {
-			// TODO: if some tag is private and note is set to public
-			case isPublic && !isAllTagsPublic:
-				setError(errorTypes.category);
-				break;
-			case noteTags.length == 0:
-				setError(errorTypes.emptyTag);
-				break;
-			case title === '':
-				setError(errorTypes.emptyTitle);
-				break;
-			default:
-				setError(errorTypes.none);
-				break;
-		}
-	};
+	useEffect(() => {
+		// TODO: debounce/throttle validation trigger
+		const validate = async () => {
+			const isAllTagsPublic = noteTags.every((tagName) => {
+				const tagObj = tags.find((tag) => tag.name === tagName);
+				return tagObj.isPublic;
+			});
+
+			if (isPublic && !isAllTagsPublic) {
+				setError({ [errorTypes.publicNoteWithPrivateTag]: true });
+			} else {
+				setError({ [errorTypes.publicNoteWithPrivateTag]: false });
+			}
+
+			if (noteTags.length === 0) {
+				setError({ [errorTypes.emptyTag]: true });
+			} else {
+				setError({ [errorTypes.emptyTag]: false });
+			}
+
+			if (title === '') {
+				setError({ [errorTypes.emptyTitle]: true });
+			} else {
+				setError({ [errorTypes.emptyTitle]: false });
+			}
+		};
+		validate();
+	}, [title, content, isPublic, noteTags]);
 
 	return (
 		<div className={styles.container}>
@@ -96,21 +108,39 @@ export const Editor = ({ saveHandler }) => {
 						rows={30}
 						cols={30}
 						value={content}
-						onInput={handleInput}
+						onInput={(ev) => {
+							setValues({ content: ev.target.value });
+						}}
 						placeholder="# Treść notatki"
 					/>
 				</div>
 				<div
 					className={`${styles.output} ${!isPreviewOpen ? styles.closed : ''}`}
 				>
-					{error && <Alert>{error}</Alert>}
+					{Object.entries(errors)
+						.filter(([key, val]) => val)
+						.map(([errKey, errVal], i) => (
+							<Alert key={i}>{errorDescriptions[errKey]}</Alert>
+						))}
+					{Object.entries(errors).some(([key, val]) => val)}
 					<div className={styles.renderedOutput}>
-						{serializedContent && (
-							<MDXRemote {...serializedContent} components={components} />
-						)}
+						<ErrorBoundary FallbackComponent={MDXErrorFallback}>
+							{serializedContent && (
+								<MDXRemote {...serializedContent} components={components} />
+							)}
+						</ErrorBoundary>
 					</div>
 				</div>
 			</main>
 		</div>
+	);
+};
+
+const MDXErrorFallback = ({ error, resetErrorBoundary }) => {
+	return (
+		<>
+			<p>Coś się zepsuło. Szczegóły: {JSON.stringify(error)}</p>
+			<button onClick={resetErrorBoundary}>Odśwież</button>
+		</>
 	);
 };

@@ -53,3 +53,8 @@
 
 .checked {
 }
+
+.error {
+	border: 2px solid $error !important;
+	border-radius: 1rem;
+}

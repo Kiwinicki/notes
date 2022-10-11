@@ -15,7 +15,7 @@ export const NoteForAdmin = () => {
 	const content = useNoteStore((state) => state.content);
 	const noteTags = useNoteStore((state) => state.noteTags);
 	const isPublic = useNoteStore((state) => state.isPublic);
-	const setValues = useNoteStore((state) => state.setValues);
+	const setError = useNoteStore((state) => state.setError);
 
 	const saveHandler = async () => {
 		if (db) {
@@ -27,10 +27,13 @@ export const NoteForAdmin = () => {
 					tags: noteTags,
 					isPublic,
 				});
+				setError({ [errorTypes.savingError]: false });
+				// TODO: saving with further editing
+				// FIXME: inserted note has url Object%20...
 				Router.push('/');
 			} catch (err) {
+				setError({ [errorTypes.savingError]: true });
 				console.error(err);
-				setValues({ error: errorTypes.savingError });
 			}
 		}
 	};

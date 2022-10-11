@@ -11,13 +11,22 @@ export default function NewNotePage() {
 
 	const saveHandler = async () => {
 		if (db) {
-			const insertedId = await addNote({
-				title,
-				content,
-				tags: noteTags,
-				isPublic,
-			});
-			console.log(insertedId);
+			try {
+				console.log({
+					title,
+					content,
+					tags: noteTags,
+					isPublic,
+				});
+
+				const insertedId = await addNote({
+					title,
+					content,
+					tags: noteTags,
+					isPublic,
+				});
+				console.log(insertedId);
+			} catch (err) {}
 		}
 	};
 

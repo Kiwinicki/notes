@@ -11,6 +11,7 @@ export const code = ({ className, ...props }) => {
 			PreTag="div"
 			style={monokai}
 			{...props}
+			className={styles.codeBlock}
 		/>
 	) : (
 		<code className={`${styles.inline} ${className}`} {...props} /> // TODO: styles for inline code

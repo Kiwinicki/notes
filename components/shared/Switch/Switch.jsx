@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Switch.module.scss';
 
 export const Switch = React.forwardRef(
-	({ value, onChange, defaultChecked, ...props }, ref) => {
+	({ value, onChange, defaultChecked, error, ...props }, ref) => {
 		const [isDefaultChecked, setIsDefaultChecked] = useState(null);
 		useEffect(() => {
 			if (defaultChecked !== undefined) {
@@ -23,7 +23,7 @@ export const Switch = React.forwardRef(
 					onChange={onChange}
 					{...(isDefaultChecked && { defaultChecked: true })}
 				/>
-				<span></span>
+				<span className={error ? styles.error : ''}></span>
 			</div>
 		);
 	}
