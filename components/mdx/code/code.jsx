@@ -14,6 +14,6 @@ export const code = ({ className, ...props }) => {
 			className={styles.codeBlock}
 		/>
 	) : (
-		<code className={`${styles.inline} ${className}`} {...props} /> // TODO: styles for inline code
+		<code className={`${styles.inline} ${className}`} {...props} />
 	);
 };

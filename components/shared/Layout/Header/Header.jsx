@@ -1,13 +1,13 @@
+import styles from './Header.module.scss';
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import styles from './Header.module.scss';
+import Router from 'next/router';
 import { Button, ButtonLink } from '../../Button/Button';
 import { Input } from '../../Input/Input';
 import { LoginForm } from './LoginForm/LoginForm';
 import { useOutsideClick } from '../../../../hooks/useOutsideClick';
 import useRealmStore, { userTypes } from '../../../../hooks/useRealmStore';
 import { debounced } from '../../../../utils/debounced';
-import Router from 'next/router';
 
 export const Header = () => {
 	const userType = useRealmStore((state) => state.userType);
@@ -55,7 +55,7 @@ export const Header = () => {
 				</form>
 				<div className={styles.searchResults}>
 					{searchResults.length > 0 ? (
-						searchResults.map(({ title, content, tags, isPublic, _id }, i) => (
+						searchResults.map(({ title, _id }, i) => (
 							<Link href={`/note/${_id.toString()}`} key={i}>
 								{title}
 							</Link>
@@ -101,6 +101,9 @@ const searchNotes = async (event, db, setSearchResults) => {
 							},
 						},
 					},
+				},
+				{
+					$limit: 10,
 				},
 			]);
 			setSearchResults(response);

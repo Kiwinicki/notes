@@ -27,6 +27,8 @@
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: 1.5rem;
+	font-weight: 600;
 }
 
 .content {
@@ -43,6 +45,7 @@
 	display: flex;
 	position: relative;
 	justify-content: space-between;
+	align-items: center;
 }
 
 .tagList {
@@ -71,10 +74,21 @@
 	color: $on-bg;
 	padding: 3px;
 	margin: 0 0 0 5px;
+	height: min-content;
 	& svg {
 		width: 1.5rem;
 		height: 1.5rem;
 		cursor: pointer;
 		padding: 0;
 	}
+	border: 2px solid transparent;
+	border-radius: 10px;
+	transition: border 0.2s ease-in-out;
+	&:hover {
+		border: 2px solid $on-bg;
+	}
+}
+
+.link {
+	height: min-content;
 }

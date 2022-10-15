@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import styles from './Note.module.scss';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
-import { components } from '../../mdx/allComponents';
+import { components } from '../../mdx';
 import Link from 'next/link';
+import useRealmStore from '../../../hooks/useRealmStore';
 
 export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 	const [serializedContent, setSerializedContent] = useState(null);
+
+	const deleteNote = useRealmStore((state) => state.deleteNote);
 
 	useEffect(() => {
 		serialize(content).then((x) => setSerializedContent(x));
@@ -14,9 +17,9 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 
 	return (
 		<Link href={`/note/${_id.toString()}`}>
-			<a href={`/note/${_id.toString()}`}>
+			<a href={`/note/${_id.toString()}`} className={styles.link}>
 				<article className={styles.note}>
-					<h2 className={styles.title}>{title}</h2>
+					<p className={styles.title}>{title}</p>
 					<div className={styles.content}>
 						{serializedContent && (
 							<MDXRemote {...serializedContent} components={components} />
@@ -33,7 +36,14 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 								))}
 						</div>
 						{/* TODO: remove note onClick */}
-						<button className={styles.removeButton}>
+						<button
+							className={styles.removeButton}
+							// FIXME: removing from notes don't affect on displayed notes on home page because on HomePage matchingNotes and notes from useRealmStore is not synchronized
+							onClick={(ev) => {
+								ev.preventDefault();
+								deleteNote(_id.toString());
+							}}
+						>
 							<TrashIcon />
 						</button>
 					</div>

@@ -4,7 +4,7 @@ import { Header } from './Header/Header';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Alert } from '../Alert/Alert';
-import { components } from '../../mdx/allComponents';
+import { components } from '../../mdx/';
 import useRealmStore from '../../../hooks/useRealmStore';
 import { useToggle } from '../../../hooks/useToggle';
 import useNoteStore, {

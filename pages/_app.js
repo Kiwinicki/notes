@@ -9,9 +9,13 @@ function MyApp({ Component, pageProps }) {
 
 	useEffect(() => {
 		(async () => {
-			await logIn({});
-			initDb();
-			await getInitData();
+			try {
+				await logIn({});
+				initDb();
+				await getInitData();
+			} catch (err) {
+				console.error(err);
+			}
 		})();
 	}, []);
 

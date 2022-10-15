@@ -7,3 +7,16 @@
 	padding: 1rem;
 	align-content: start;
 }
+
+.emptyResultContainer {
+	position: relative;
+	justify-content: center;
+	align-items: center;
+}
+
+.emptyResultText {
+	position: absolute;
+	width: 100%;
+	left: 50%;
+	text-align: center;
+}

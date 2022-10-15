@@ -16,24 +16,43 @@ export const Home = () => {
 			if (db) {
 				if (router.query.phrase) {
 					console.log(router.query.phrase);
-					const response = await db.collection('notes').aggregate([
-						{
-							$search: {
-								index: 'searchNote',
-								text: {
-									query: router.query.phrase,
-									path: {
-										wildcard: '*',
-									},
-									fuzzy: {
-										maxEdits: 1,
-										maxExpansions: 1,
+					try {
+						const response = await db.collection('notes').aggregate([
+							{
+								$search: {
+									index: 'searchNote',
+									text: {
+										query: router.query.phrase,
+										path: {
+											wildcard: '*',
+										},
+										fuzzy: {
+											maxEdits: 1,
+											maxExpansions: 1,
+										},
 									},
 								},
 							},
-						},
-					]);
-					setMatchingNotes(response);
+						]);
+						setMatchingNotes(response);
+					} catch (err) {
+						console.error(err);
+					}
+				} else {
+					setMatchingNotes(notes);
+				}
+				if (router.query.tag) {
+					console.log(router.query.tag);
+					try {
+						const response = await db
+							.collection('notes')
+							.find({ tags: { $in: [router.query.tag] } });
+
+						console.log(response);
+						setMatchingNotes(response);
+					} catch (err) {
+						console.error(err);
+					}
 				} else {
 					setMatchingNotes(notes);
 				}
@@ -42,9 +61,16 @@ export const Home = () => {
 	}, [router.query, notes, db]);
 
 	return (
-		<main className={styles.notes}>
-			{matchingNotes &&
-				matchingNotes.map((note, i) => <Note {...note} key={i} />)}
-		</main>
+		<div className={styles.notes}>
+			{matchingNotes && matchingNotes?.length > 0 ? (
+				matchingNotes.map((note, i) => <Note {...note} key={i} />)
+			) : (
+				<div className={styles.emptyResultContainer}>
+					<p className={styles.emptyResultText}>
+						Nie znaleziono notatek pasujących do podanej frazy lub tagu.
+					</p>
+				</div>
+			)}
+		</div>
 	);
 };

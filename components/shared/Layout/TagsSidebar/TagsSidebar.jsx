@@ -1,18 +1,29 @@
-import { useState } from 'react';
 import styles from './TagsSidebar.module.scss';
-import { Button } from '../../Button/Button';
+import { useState, useCallback } from 'react';
+import { Button, ButtonLink } from '../../Button/Button';
+import { Input } from '../../Input/Input';
 import useRealmStore, { userTypes } from '../../../../hooks/useRealmStore';
 import { useToggle } from '../../../../hooks/useToggle';
-import { useEffect } from 'react';
+import { useOutsideClick } from '../../../../hooks/useOutsideClick';
 
 export const TagsSidebar = () => {
 	const userType = useRealmStore((state) => state.userType);
 	const tags = useRealmStore((state) => state.tags);
 	const addTag = useRealmStore((state) => state.addTag);
 
-	const [isAddingTagVisible, setIsAddingTagVisible] = useState(false);
 	const [newTagName, setNewTagName] = useState('');
 	const [isNewTagPublic, setIsNewTagPublic] = useToggle(false);
+
+	const {
+		ref,
+		state: isAddingTagVisible,
+		setState: setIsAddingTagVisible,
+	} = useOutsideClick();
+
+	const outsideClickHandler = useCallback(() => {
+		setIsAddingTagVisible((prev) => !prev);
+		setNewTagName('');
+	}, []);
 
 	return (
 		<aside className={styles.tags}>
@@ -20,13 +31,21 @@ export const TagsSidebar = () => {
 				tags.length > 0 &&
 				tags.map((tag, i) => (
 					// TODO: filters notes by category onClick
-					<Button key={i}>{tag.name}</Button>
+					<ButtonLink
+						href={{
+							pathname: '/',
+							query: { tag: tag.name },
+						}}
+						key={i}
+					>
+						{tag.name}
+					</ButtonLink>
 				))}
-			{/* TODO: adding categories onClick */}
 			{userType === userTypes.admin &&
+				// TODO: add styles
 				(isAddingTagVisible ? (
-					<div className={styles.addTagContainer}>
-						<input
+					<div ref={ref} className={styles.addTagContainer}>
+						<Input
 							type="text"
 							value={newTagName}
 							onChange={(ev) => setNewTagName(ev.target.value)}
@@ -41,7 +60,6 @@ export const TagsSidebar = () => {
 								className={styles.tagPublic}
 							/>
 						</label>
-						{/* TODO: adding new tag to realm */}
 						<button
 							onClick={() =>
 								addTag({ name: newTagName, isPublic: isNewTagPublic })
@@ -51,7 +69,7 @@ export const TagsSidebar = () => {
 						</button>
 					</div>
 				) : (
-					<Button onClick={() => setIsAddingTagVisible(true)}>Dodaj tag</Button>
+					<Button onClick={outsideClickHandler}>Dodaj tag</Button>
 				))}
 		</aside>
 	);

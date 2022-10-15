@@ -3,7 +3,7 @@ import styles from './NoteForVisitor.module.scss';
 import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Layout } from '../../shared/Layout/Layout';
-import { components } from '../../mdx/allComponents';
+import { components } from '../../mdx';
 import useNoteStore from '../../../hooks/useNoteStore';
 import { ButtonLink } from '../../shared/Button/Button';
 
@@ -23,17 +23,17 @@ export const NoteForVisitor = () => {
 
 	return (
 		<Layout>
-			<main className={styles.main}>
+			<article className={styles.note}>
 				<p className={styles.title}>{title}</p>
 				<p className={styles.tags}>
-					tagi:
+					<span>tagi:</span>
 					{noteTags &&
 						noteTags.map((tagName, i) => (
 							<ButtonLink key={i}>#{tagName}</ButtonLink>
 						))}
 				</p>
 				{serialized && <MDXRemote {...serialized} components={components} />}
-			</main>
+			</article>
 		</Layout>
 	);
 };

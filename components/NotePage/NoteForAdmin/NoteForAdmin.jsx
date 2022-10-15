@@ -29,6 +29,7 @@ export const NoteForAdmin = () => {
 				});
 				setError({ [errorTypes.savingError]: false });
 				// TODO: saving with further editing
+				// FIXME: note not updating on home page but is updated in edit mode
 				// FIXME: inserted note has url Object%20...
 				Router.push('/');
 			} catch (err) {

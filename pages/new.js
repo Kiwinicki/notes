@@ -3,11 +3,11 @@ import Head from 'next/head';
 import { Editor } from '../components/shared/Editor/Editor';
 import { AnonymousRedirect } from '../components/shared/AnonymousRedirect';
 import useRealmStore from '../hooks/useRealmStore';
-import useNoteStore from '../hooks/useNoteStore';
+import useNoteStore, { errorTypes } from '../hooks/useNoteStore';
 
 export default function NewNotePage() {
 	const { db, addNote } = useRealmStore(({ db, addNote }) => ({ db, addNote }));
-	const { title, content, noteTags, isPublic } = useNoteStore();
+	const { title, content, noteTags, isPublic, setError } = useNoteStore();
 
 	const saveHandler = async () => {
 		if (db) {
@@ -26,7 +26,9 @@ export default function NewNotePage() {
 					isPublic,
 				});
 				console.log(insertedId);
-			} catch (err) {}
+			} catch (err) {
+				setError(errorTypes.savingError);
+			}
 		}
 	};
 
