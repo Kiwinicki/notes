@@ -5,6 +5,7 @@ import useRealmStore, { userTypes } from '../../hooks/useRealmStore';
 import { NoteForVisitor } from '../../components/NotePage/NoteForVisitor/NoteForVisitor';
 import { NoteForAdmin } from '../../components/NotePage/NoteForAdmin/NoteForAdmin';
 import useNoteStore from '../../hooks/useNoteStore';
+import { ButtonLink } from '../../components/shared/Button/Button';
 
 const statusTypes = {
 	success: 'success',
@@ -71,6 +72,7 @@ export default function NotePage() {
 				<p>
 					Wystąpił błąd przy wyświetleniu notatki. Sprawdź połączenie z
 					internetem lub odśwież stronę.
+					<ButtonLink href="/">Wróć do strony głównej</ButtonLink>
 				</p>
 			)}
 		</>

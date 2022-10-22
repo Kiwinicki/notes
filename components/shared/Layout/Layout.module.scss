@@ -11,13 +11,3 @@
 	width: 100%;
 	flex-grow: 1;
 }
-
-.loadingContainer,
-.errorContainer {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	gap: 1rem;
-}

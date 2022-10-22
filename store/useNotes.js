@@ -1,37 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { useDb } from './useDb';
-
-export const useNotes = ({ phrase, tag }) => {
-	const { data: db } = useDb({});
-
-	// TODO: search index if phrase
-	// TODO: search notes by tag if provided tag
-	// TODO: bonus: if provided both tag and phrase then combine search
-	// TODO: bouns: pagination
-
-	return useQuery(
-		['notes', { phrase, tag }],
-		() => getNotes({ phrase, query }),
-		{
-			enabled: !!db,
-		}
-	);
-};
+import { useApp } from './useApp';
 
 const getNotes = ({ db, phrase, tag }) => {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		if (db) {
-			// get first notes on init render
-			if (!phrase && !tag) {
-				db.collection('notes')
-					.find()
-					.limit(20)
-					.then((res) => resolve(res))
-					.catch((err) => reject(err));
-			}
 			if (phrase) {
-				db.collection('notes')
-					.aggregate([
+				try {
+					const noteData = await db.collection('notes').aggregate([
 						{
 							$search: {
 								index: 'searchNote',
@@ -47,21 +22,57 @@ const getNotes = ({ db, phrase, tag }) => {
 								},
 							},
 						},
-					])
-					.then((res) => resolve(res))
-					.catch((err) => reject(err));
+						{
+							$limit: 10,
+						},
+					]);
+					resolve(noteData);
+				} catch (err) {
+					reject(err);
+				}
 			}
+
 			if (tag) {
-				db.collection('notes')
-					.find({ tags: { $in: [tag] } })
-					.then((res) => resolve(res))
-					.catch((err) => reject(err));
+				try {
+					const noteData = await db
+						.collection('notes')
+						.find({ tags: { $in: [tag] } });
+					resolve(noteData);
+				} catch (err) {
+					reject(err);
+				}
 			}
-			if (phrase && tag) {
-				// to be done later
+
+			// get initial notes for home page
+			if (!tag && !phrase) {
+				try {
+					const noteData = await db
+						.collection('notes')
+						.find({}, { $limit: 10 });
+					resolve(noteData);
+				} catch (err) {
+					reject(err);
+				}
 			}
 		} else {
-			reject('Database not provided');
+			reject('No database provided');
 		}
 	});
+};
+
+export const useNotes = ({ phrase = '', tag }) => {
+	const [{ data: appData, isSuccess: appSuccess }] = useApp();
+
+	return useQuery(
+		['notes', appData.user?.id, { phrase, tag }],
+		() => getNotes({ db: appData.db, phrase, tag }),
+		{ enabled: appSuccess }
+	);
+
+	// const getSingleNote = useMutation(getSingleNoteHandler);
+	// const addNote = useMutation(addNoteHandler);
+	// const updateNote = useMutation(updateNoteHandler);
+	// const deleteNote = useMutation(deleteNoteHandler);
+
+	// return [ notesDataAndStatus, { addNote, updateNote, deleteNote, getSingleNote }];
 };

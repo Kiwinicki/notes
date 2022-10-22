@@ -1,28 +1,29 @@
-import { useState } from 'react';
 import styles from './LoginForm.module.scss';
 import { Button } from '../../../Button/Button';
 import { Alert } from '../../../Alert/Alert';
 import { Input } from '../../../Input/Input';
-import useRealmStore from '../../../../../hooks/useRealmStore';
+import { useEffect } from 'react';
+import { useApp } from '../../../../../store/useApp';
 
 export const LoginForm = ({ isVisible, setVisible }) => {
-	const switchUser = useRealmStore((state) => state.switchUser);
-	const [loginError, setLoginError] = useState(false);
+	const [{ isError, isSuccess }, logIn] = useApp();
+
+	useEffect(() => {
+		setVisible((prev) => (isSuccess ? false : prev));
+	}, [isSuccess]);
 
 	return (
 		<form
 			className={`${styles.form} ${isVisible ? '' : 'hidden'}`}
 			onSubmit={(event) => {
 				event.preventDefault();
-				(async () => {
-					const resp = await switchUser({
-						login: event.target[0].value,
-						password: event.target[1].value,
-					});
 
-					setVisible((prev) => (resp ? false : prev));
-					setLoginError(resp ? false : true);
-				})();
+				logIn({
+					login: event.target[0].value,
+					password: event.target[1].value,
+				});
+
+				setVisible((prev) => (isSuccess ? false : prev));
 			}}
 		>
 			<label htmlFor="login" className="srOnly">
@@ -39,7 +40,7 @@ export const LoginForm = ({ isVisible, setVisible }) => {
 				placeholder="hasło"
 			/>
 			<Button type="submit">Zaloguj jako admin</Button>
-			{loginError && <Alert type="error">Nie udało się zalogować</Alert>}
+			{isError && <Alert type="error">Nie udało się zalogować</Alert>}
 		</form>
 	);
 };
