@@ -1,9 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useApp } from './useApp';
+import { BSON } from 'realm-web';
 
-const getNotes = ({ db, phrase, tag }) => {
+const { ObjectId } = BSON;
+
+const getNotes = ({ db, phrase, tag, noteId }) => {
 	return new Promise(async (resolve, reject) => {
 		if (db) {
+			// TODO: search note in general cache?
+			if (noteId) {
+				try {
+					const note = db
+						.collection('notes')
+						.findOne({ _id: ObjectId(noteId) });
+					if (note) resolve(note);
+					else reject('Note not found');
+				} catch (err) {
+					reject(err);
+				}
+			}
+
 			if (phrase) {
 				try {
 					const noteData = await db.collection('notes').aggregate([
@@ -60,19 +76,20 @@ const getNotes = ({ db, phrase, tag }) => {
 	});
 };
 
-export const useNotes = ({ phrase = '', tag }) => {
+export const useNotes = ({ phrase = '', tag, noteId }) => {
 	const [{ data: appData, isSuccess: appSuccess }] = useApp();
 
-	return useQuery(
-		['notes', appData.user?.id, { phrase, tag }],
-		() => getNotes({ db: appData.db, phrase, tag }),
+	const notesDataAndStatus = useQuery(
+		['notes', appData.user?.id, { phrase, tag, noteId }],
+		() => getNotes({ db: appData.db, phrase, tag, noteId }),
 		{ enabled: appSuccess && !!appData.db }
 	);
 
-	// const getSingleNote = useMutation(getSingleNoteHandler);
-	// const addNote = useMutation(addNoteHandler);
-	// const updateNote = useMutation(updateNoteHandler);
-	// const deleteNote = useMutation(deleteNoteHandler);
+	// const getSingleNote = useQuery();
 
-	// return [ notesDataAndStatus, { addNote, updateNote, deleteNote, getSingleNote }];
+	const addNote = useMutation();
+	const updateNote = useMutation(); // should cause refetch in useQuery or change cache
+	const deleteNote = useMutation();
+
+	return [notesDataAndStatus, { addNote, updateNote, deleteNote }];
 };

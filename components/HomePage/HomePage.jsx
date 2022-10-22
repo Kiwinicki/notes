@@ -7,12 +7,10 @@ import { Loader } from '../shared/Loader/Loader';
 export const Home = () => {
 	const { query } = useRouter();
 
-	const {
-		data: notes,
-		isLoading,
-		isSuccess,
-		isError,
-	} = useNotes({ phrase: query.phrase, tag: query.tag });
+	const [{ data: notes, isLoading, isSuccess, isError }] = useNotes({
+		phrase: query.phrase,
+		tag: query.tag,
+	});
 
 	if (isLoading) {
 		return (

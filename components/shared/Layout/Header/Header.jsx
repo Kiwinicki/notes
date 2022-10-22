@@ -21,12 +21,14 @@ export const Header = () => {
 	const [debouncedPhrase] = useDebounce(phrase, 500);
 
 	const [{ data: userData, isSuccess: appSuccess }, logIn] = useApp();
-	const {
-		data: foundNotes,
-		isSuccess: searchSuccess,
-		isError: searchError,
-		isLoading: searchLoading,
-	} = useNotes({ phrase: debouncedPhrase });
+	const [
+		{
+			data: foundNotes,
+			isSuccess: searchSuccess,
+			isError: searchError,
+			isLoading: searchLoading,
+		},
+	] = useNotes({ phrase: debouncedPhrase });
 
 	return (
 		<header className={styles.container}>

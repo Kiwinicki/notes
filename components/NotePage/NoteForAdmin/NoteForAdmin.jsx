@@ -1,14 +1,16 @@
 import React from 'react';
 import Router from 'next/router';
 import useNoteStore, { errorTypes } from '../../../hooks/useNoteStore';
-import useRealmStore from '../../../hooks/useRealmStore';
 import { Editor } from '../../shared/Editor/Editor';
+import { useApp } from '../../../store/useApp';
 
 export const NoteForAdmin = () => {
-	const { db, updateNote } = useRealmStore(({ db, updateNote }) => ({
-		db,
-		updateNote,
-	}));
+	const [
+		{
+			data: { db },
+		},
+		{ updateNote },
+	] = useApp();
 
 	const noteId = useNoteStore((state) => state.noteId);
 	const title = useNoteStore((state) => state.title);
@@ -29,8 +31,6 @@ export const NoteForAdmin = () => {
 				});
 				setError({ [errorTypes.savingError]: false });
 				// TODO: saving with further editing
-				// FIXME: note not updating on home page but is updated in edit mode
-				// FIXME: inserted note has url Object%20...
 				Router.push('/');
 			} catch (err) {
 				setError({ [errorTypes.savingError]: true });
@@ -39,5 +39,10 @@ export const NoteForAdmin = () => {
 		}
 	};
 
-	return <Editor saveHandler={saveHandler} />;
+	return (
+		<Editor
+			saveHandler={saveHandler}
+			{...{ saveHandler, title, content, noteTags, isPublic }}
+		/>
+	);
 };

@@ -4,12 +4,9 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Layout } from '../../shared/Layout/Layout';
 import { components } from '../../mdx';
-import useNoteStore from '../../../hooks/useNoteStore';
 import { ButtonLink } from '../../shared/Button/Button';
 
-export const NoteForVisitor = () => {
-	const { title, content, noteTags } = useNoteStore();
-
+export const NoteForVisitor = ({ title, content, tags: noteTags }) => {
 	const [serialized, setSerialized] = useState(null);
 
 	useEffect(() => {
