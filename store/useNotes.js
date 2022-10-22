@@ -66,7 +66,7 @@ export const useNotes = ({ phrase = '', tag }) => {
 	return useQuery(
 		['notes', appData.user?.id, { phrase, tag }],
 		() => getNotes({ db: appData.db, phrase, tag }),
-		{ enabled: appSuccess }
+		{ enabled: appSuccess && !!appData.db }
 	);
 
 	// const getSingleNote = useMutation(getSingleNoteHandler);

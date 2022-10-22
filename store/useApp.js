@@ -55,7 +55,6 @@ export const useApp = () => {
 	const setAppKey = useKeysStore((state) => state.setAppQueryKey);
 
 	const logIn = ({ login, password }) => {
-		console.log(login, password);
 		setAppKey(['app', { login, password }]);
 	};
 

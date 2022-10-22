@@ -20,7 +20,7 @@ export const useTags = () => {
 		['tags', appData.user?.id],
 		() => getTags({ db: appData.db }),
 		{
-			enabled: appSuccess,
+			enabled: appSuccess && !!appData.db,
 		}
 	);
 
