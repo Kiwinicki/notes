@@ -85,8 +85,6 @@ export const useNotes = ({ phrase = '', tag, noteId }) => {
 		{ enabled: appSuccess && !!appData.db }
 	);
 
-	// const getSingleNote = useQuery();
-
 	const addNote = useMutation();
 	const updateNote = useMutation(); // should cause refetch in useQuery or change cache
 	const deleteNote = useMutation();

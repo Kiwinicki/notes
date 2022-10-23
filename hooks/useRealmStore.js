@@ -4,17 +4,17 @@ import * as RealmWeb from 'realm-web';
 
 const { ObjectId } = RealmWeb.BSON;
 
-export const userTypes = Object.freeze({
-	visitor: 'visitor',
-	admin: 'admin',
-	none: 'none',
-});
+// export const userTypes = Object.freeze({
+// 	visitor: 'visitor',
+// 	admin: 'admin',
+// 	none: 'none',
+// });
 
-export const loginStatus = Object.freeze({
-	loggedIn: 'loggedIn',
-	loading: 'loading',
-	unauthenticated: 'unauthenticated',
-});
+// export const loginStatus = Object.freeze({
+// 	loggedIn: 'loggedIn',
+// 	loading: 'loading',
+// 	unauthenticated: 'unauthenticated',
+// });
 
 const REALM_APP_ID = process.env.NEXT_PUBLIC_REALM_APP_ID;
 const app = new RealmWeb.App({ id: REALM_APP_ID });

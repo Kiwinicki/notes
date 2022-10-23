@@ -17,7 +17,7 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 
 	return (
 		<Link href={`/note/${_id.toString()}`}>
-			<a href={`/note/${_id.toString()}`} className={styles.link}>
+			<a className={styles.link}>
 				<article className={styles.note}>
 					<p className={styles.title}>{title}</p>
 					<div className={styles.content}>

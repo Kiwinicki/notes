@@ -1,0 +1,27 @@
+@use '../../../../../styles/vars' as *;
+@use '../../../../../styles/mixins' as *;
+
+.container {
+	position: relative;
+	flex-grow: 1;
+	&:focus-within .searchResults {
+		visibility: visible;
+	}
+}
+
+.searchBar {
+	width: 100%;
+}
+
+.searchResults {
+	visibility: hidden;
+	transform: translateY(10px);
+	position: absolute;
+	background: $bg;
+	z-index: 1;
+	@include border;
+	width: 100%;
+	& * {
+		@include txtOverflow(1);
+	}
+}

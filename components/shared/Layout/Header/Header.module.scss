@@ -9,37 +9,6 @@
 	gap: 10%;
 }
 
-.logo {
-	font-weight: 700;
-	font-weight: 5rem;
-	cursor: pointer;
-}
-
-.searchContainer {
-	position: relative;
-	flex-grow: 1;
-	&:focus-within .searchResults {
-		visibility: visible;
-	}
-}
-
-.searchBar {
-	width: 100%;
-}
-
-.searchResults {
-	visibility: hidden;
-	transform: translateY(10px);
-	position: absolute;
-	background: $bg;
-	z-index: 1;
-	@include border;
-	width: 100%;
-	& * {
-		@include txtOverflow(1);
-	}
-}
-
 .loginContainer {
 	position: relative;
 }

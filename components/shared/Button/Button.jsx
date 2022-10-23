@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import styles from './Button.module.scss';
 
-export const Button = ({ children, error, ...rest }) => {
+export const Button = ({ className, children, error, ...rest }) => {
 	return (
 		<button
-			className={`${styles.button} ${error ? styles.error : ''}`}
+			className={`${styles.button} ${error ? styles.error : ''} ${className}`}
 			{...rest}
 		>
 			{children}
@@ -12,9 +12,9 @@ export const Button = ({ children, error, ...rest }) => {
 	);
 };
 
-export const ButtonLink = ({ children, href = '/', ...rest }) => (
+export const ButtonLink = ({ children, href = '/', className, ...rest }) => (
 	<Link href={href}>
-		<a className={styles.buttonLink} {...rest}>
+		<a className={`${styles.buttonLink} ${className}`} {...rest}>
 			{children}
 		</a>
 	</Link>
