@@ -4,15 +4,25 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { components } from '../../mdx';
 import Link from 'next/link';
-import useRealmStore from '../../../hooks/useRealmStore';
+import { useNotes } from '../../../store/useNotes';
+import remarkMath from 'remark-math';
+import markdown from 'remark-parse';
+import rehypeKatex from 'rehype-katex';
 
 export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 	const [serializedContent, setSerializedContent] = useState(null);
 
-	const deleteNote = useRealmStore((state) => state.deleteNote);
+	const [, { deleteNote }] = useNotes({});
 
 	useEffect(() => {
-		serialize(content).then((x) => setSerializedContent(x));
+		serialize(content, {
+			mdxOptions: {
+				remarkPlugins: [markdown, remarkMath],
+				rehypePlugins: [rehypeKatex],
+				format: 'mdx',
+			},
+			parseFrontmatter: false,
+		}).then((x) => setSerializedContent(x));
 	}, [content]);
 
 	return (
@@ -41,7 +51,7 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 							// FIXME: removing from notes don't affect on displayed notes on home page because on HomePage matchingNotes and notes from useRealmStore is not synchronized
 							onClick={(ev) => {
 								ev.preventDefault();
-								deleteNote(_id.toString());
+								deleteNote.mutate({ noteId: _id.toString() });
 							}}
 						>
 							<TrashIcon />

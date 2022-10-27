@@ -7,9 +7,13 @@
 	&:focus-within .searchResults {
 		visibility: visible;
 	}
+	& form {
+		height: 100%;
+	}
 }
 
 .searchBar {
+	height: 100%;
 	width: 100%;
 }
 

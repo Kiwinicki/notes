@@ -1,6 +1,6 @@
 import styles from './Header.module.scss';
 import { useState } from 'react';
-
+import { ListIcon } from '../../../../assets/ListIcon';
 import Router from 'next/router';
 import { Button, ButtonLink } from '../../Button/Button';
 
@@ -23,8 +23,10 @@ export const Header = ({ toggleTagMenu }) => {
 
 	return (
 		<header className={styles.container}>
-			<TagMenuButton onClick={toggleTagMenu} />
-			<Logo />
+			<div className={styles.leftContainer}>
+				<TagMenuButton onClick={toggleTagMenu} />
+				<Logo />
+			</div>
 			<NoteSearchBar />
 			{isSuccess && (
 				<>
@@ -52,19 +54,8 @@ export const Header = ({ toggleTagMenu }) => {
 
 const TagMenuButton = (props) => {
 	return (
-		<Button {...props}>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				fill="currentColor"
-				viewBox="0 0 16 16"
-			>
-				<path
-					fillRule="evenodd"
-					d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-				/>
-			</svg>
+		<Button {...props} className={styles.menuButton}>
+			<ListIcon />
 		</Button>
 	);
 };

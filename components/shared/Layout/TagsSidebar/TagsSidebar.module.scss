@@ -21,10 +21,8 @@
 
 .closeButton {
 	width: min-content;
-	aspect-ratio: 1;
 	display: flex;
 	& svg {
-		width: 1.25rem;
 		scale: 1.25;
 	}
 }

@@ -1,20 +1,20 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import useRealmStore, { userTypes } from '../../hooks/useRealmStore';
+import { useApp, userTypes } from '../../store/useApp';
 
 export const AnonymousRedirect = ({ children, redirectTo = '/' }) => {
-	const userType = useRealmStore((state) => state.userType);
+	const [{ data }] = useApp();
 	const router = useRouter();
 
 	useEffect(() => {
-		if (userType !== userTypes.admin) {
+		if (data.userType !== userTypes.admin) {
 			router.push({
 				pathname: redirectTo,
 			});
 		}
-	}, [userType]);
+	}, [data.userType]);
 
-	if (userType === userTypes.admin) {
+	if (data.userType === userTypes.admin) {
 		return children;
 	} else {
 		return <p>Przekierowywanie...</p>;

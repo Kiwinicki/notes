@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import styles from './HomePage.module.scss';
 import { Note } from './Note/Note';
 import { useRouter } from 'next/router';

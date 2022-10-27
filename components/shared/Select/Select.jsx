@@ -83,9 +83,9 @@ export function Select({
 		>
 			<span className={styles.value}>
 				{multiple
-					? value.map((v) => (
+					? value.map((v, i) => (
 							<button
-								key={v.value}
+								key={i}
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
@@ -120,7 +120,7 @@ export function Select({
 							setIsOpen(false);
 						}}
 						onMouseEnter={() => setHighlightedIndex(index)}
-						key={option.value}
+						key={index}
 						className={`${styles.option} ${
 							isOptionSelected(option) ? styles.selected : ''
 						} ${index === highlightedIndex ? styles.highlighted : ''}`}

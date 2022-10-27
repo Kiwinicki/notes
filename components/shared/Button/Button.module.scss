@@ -3,13 +3,13 @@
 
 .button {
 	background-color: $bg;
+	display: inline-flex;
 	color: $on-bg;
 	@include border;
 	font-weight: 600;
 	font-size: 1rem;
 	padding: 10px;
 	transition: 0.2s ease-in-out;
-	height: min-content;
 	font-family: inherit;
 	&:hover {
 		background-color: $primary;

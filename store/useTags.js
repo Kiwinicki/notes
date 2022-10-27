@@ -24,7 +24,9 @@ export const useTags = () => {
 		}
 	);
 
+	// TODO: adding tags
 	const addTag = () => console.log('addTag');
+	// TODO: deleting tags
 	const deleteTag = () => console.log('deleteTag');
 
 	return [tagsDataAndStatus, { addTag, deleteTag }];

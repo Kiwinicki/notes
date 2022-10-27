@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './NoteSearchBar.module.scss';
 import Link from 'next/link';
 import { useDebounce } from 'use-debounce';
@@ -13,6 +13,13 @@ export const NoteSearchBar = () => {
 		phrase: debouncedPhrase,
 	});
 
+	// prevents showing loading state on page load
+	const [isInitLoad, setIsInitLoad] = useState(true);
+	useEffect(() => {
+		if (isInitLoad && isSuccess) setIsInitLoad(false);
+	}, [isSuccess]);
+
+	// TODO: searchBar expand all header on search
 	return (
 		<div className={styles.container}>
 			<form
@@ -37,8 +44,8 @@ export const NoteSearchBar = () => {
 				<div className={styles.searchResults}>
 					{phrase === '' ? (
 						<p>Zacznij szukać</p>
-					) : foundNotes.length > 0 ? (
-						foundNotes.map(({ title, _id }, i) => (
+					) : data.length > 0 ? (
+						data.map(({ title, _id }, i) => (
 							<Link href={`/note/${_id.toString()}`} key={i}>
 								{title}
 							</Link>
@@ -49,7 +56,7 @@ export const NoteSearchBar = () => {
 				</div>
 			)}
 			{isError && <p>Wystąpił błąd podczas szukania notatek</p>}
-			{isLoading && <p>Szukam...</p>}
+			{isLoading && !isInitLoad && <p>Szukam...</p>}
 		</div>
 	);
 };

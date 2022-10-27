@@ -4,9 +4,16 @@
 .container {
 	display: flex;
 	justify-content: space-between;
+	align-items: stretch;
 	border-bottom: $border;
 	padding: 1rem;
-	gap: 10%;
+	gap: 1rem;
+}
+
+.leftContainer {
+	display: flex;
+	gap: 1rem;
+	align-items: stretch;
 }
 
 .loginContainer {
@@ -15,5 +22,12 @@
 
 .btnsContainer {
 	display: flex;
+	align-items: center;
 	gap: 1rem;
+}
+
+.menuButton svg {
+	scale: 1.25;
+	height: 100%;
+	aspect-ratio: 1;
 }

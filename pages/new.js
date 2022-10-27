@@ -4,13 +4,16 @@ import { Editor } from '../components/shared/Editor/Editor';
 import { AnonymousRedirect } from '../components/shared/AnonymousRedirect';
 import useRealmStore from '../hooks/useRealmStore';
 import useNoteStore, { errorTypes } from '../hooks/useNoteStore';
+import { useNotes } from '../store/useNotes';
+import { useApp } from '../store/useApp';
 
 export default function NewNotePage() {
-	const { db, addNote } = useRealmStore(({ db, addNote }) => ({ db, addNote }));
+	const [, { addNote }] = useNotes({});
+	const [{ data }] = useApp({});
 	const { title, content, noteTags, isPublic, setError } = useNoteStore();
 
 	const saveHandler = async () => {
-		if (db) {
+		if (data.db) {
 			try {
 				console.log({
 					title,

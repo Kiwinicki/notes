@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './NotePage.module.scss';
 import { useApp, userTypes } from '../../store/useApp';
 import { useNotes } from '../../store/useNotes';
@@ -25,11 +25,16 @@ export const Note = () => {
 		},
 	] = useApp();
 
-	const [{ data, isLoading, isSuccess, isError }] = useNotes({ noteId });
+	const [{ data, isLoading, isSuccess, isError }, { updateNote }] = useNotes({
+		noteId,
+	});
 
-	const [editorValue, setEditorValue] = useState(
-		data?.content || 'start typing...'
-	);
+	const saveHandler = ({ title, isPublic, tags }) => {
+		console.log(noteId, title, isPublic, editorValue, tags);
+		updateNote.mutate({ noteId, title, isPublic, content: editorValue, tags });
+	};
+
+	const [editorValue, setEditorValue] = useState('start typing...');
 	const [debouncedEditorValue] = useDebounce(editorValue, 300);
 	const [serializedContent, setSerializedContent] = useState(null);
 
@@ -51,9 +56,17 @@ export const Note = () => {
 		})();
 	}, [debouncedEditorValue]);
 
+	useEffect(() => {
+		setEditorValue(data?.content);
+	}, [isSuccess]);
+
 	return (
 		<div className={styles.noteContainer}>
-			<EditorNavBar />
+			<EditorNavBar
+				saveHandler={({ title, isPublic, tags }) =>
+					saveHandler({ title, isPublic, tags })
+				}
+			/>
 			<div className={styles.contentContainer}>
 				{userType === userTypes.admin && (
 					<>
@@ -78,14 +91,19 @@ export const Note = () => {
 				)}
 				<div className={styles.mdxOutput}>
 					<div className={styles.scrollableOutput}>
-						<p>{data?.title}</p>
-						tagi:
-						<ul>
-							{data?.tags.map((tag) => (
-								<li key={tag}>#{tag}</li>
-							))}
-						</ul>
-						<ErrorBoundary>
+						<div>Tytuł: {data?.title}</div>
+						<div style={{ border: '1px dotted green' }}>
+							tagi:
+							<ul>
+								{data?.tags.map((tag) => (
+									<li key={tag}>#{tag}</li>
+								))}
+							</ul>
+							---
+						</div>
+						<ErrorBoundary
+							FallbackComponent={<p>problem przy renderowaniu notatki</p>}
+						>
 							{serializedContent && (
 								<MDXRemote {...serializedContent} components={components} />
 							)}
