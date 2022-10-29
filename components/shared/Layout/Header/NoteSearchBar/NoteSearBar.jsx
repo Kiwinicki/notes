@@ -19,7 +19,7 @@ export const NoteSearchBar = () => {
 		if (isInitLoad && isSuccess) setIsInitLoad(false);
 	}, [isSuccess]);
 
-	// TODO: searchBar expand all header on search
+	// TODO: searchBar expand header height on fetching notes
 	return (
 		<div className={styles.container}>
 			<form

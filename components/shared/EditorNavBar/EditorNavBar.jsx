@@ -45,6 +45,7 @@ export const EditorNavBar = ({ saveHandler }) => {
 						title="Tytuł notatki"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
+						// TODO: error handling (validation and displaying)
 						// {...(errors[errorTypes.emptyTitle] && { error: true })}
 					/>
 				</div>
@@ -55,21 +56,21 @@ export const EditorNavBar = ({ saveHandler }) => {
 						onChange={() => toggleIsPublic()}
 						title={`Status notatki: ${isPublic ? 'Publiczna' : 'Prywatna'}`}
 					/>
+					{/* TODO: some slim label for isPublic switch */}
 					{/* <label htmlFor="switch" >{isPublic ? 'Publiczna' : 'Prywatna'}</label> */}
 				</div>
 				<Select
 					multiple
 					value={selectedOptions}
-					onChange={(e) => {
-						setSelectedOptions(e);
-						// const values = e.map((opt) => opt.value);
-						// 	setValues({ noteTags: values });
-					}}
+					onChange={(e) => setSelectedOptions(e)}
 					options={allOptions}
 					title="Lista tagów"
+					// TODO: error handling (validation and displaying)
 					// {...(errors[errorTypes.emptyTag] && { error: true })}
 				/>
+				{/* TODO: disable submit button if errors */}
 				<Button
+					type="submit"
 					onClick={() => {
 						console.log(selectedOptions);
 						const tags = selectedOptions.map((tag) => tag.value);

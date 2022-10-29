@@ -101,9 +101,7 @@ export const Note = () => {
 							</ul>
 							---
 						</div>
-						<ErrorBoundary
-							FallbackComponent={<p>problem przy renderowaniu notatki</p>}
-						>
+						<ErrorBoundary FallbackComponent={MDXErrorFallback}>
 							{serializedContent && (
 								<MDXRemote {...serializedContent} components={components} />
 							)}
@@ -112,5 +110,14 @@ export const Note = () => {
 				</div>
 			</div>
 		</div>
+	);
+};
+
+const MDXErrorFallback = ({ error, resetErrorBoundary }) => {
+	return (
+		<>
+			<p>Coś się zepsuło. Szczegóły: {JSON.stringify(error)}</p>
+			<button onClick={resetErrorBoundary}>Odśwież</button>
+		</>
 	);
 };

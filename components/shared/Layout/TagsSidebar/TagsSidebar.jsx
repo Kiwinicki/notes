@@ -35,19 +35,19 @@ export const TagsSidebar = ({ isTagMenuOpen, toggleTagMenu }) => {
 			>
 				<Button onClick={toggleTagMenu} className={styles.closeButton}>
 					<XIcon />
-					{/* TODO: AddTag here for better UX */}
+					{/* TODO: AddTag should be here for better UX */}
 				</Button>
 				<div className={styles.scrollableContainer}>
 					{tagsData.length > 0 &&
-						tagsData.map((tag, i) => (
+						tagsData.map(({ name, _id }) => (
 							<ButtonLink
 								href={{
 									pathname: '/',
-									query: { tag: tag.name },
+									query: { tag: name },
 								}}
-								key={i}
+								key={_id.toString()}
 							>
-								#{tag.name}
+								#{name}
 							</ButtonLink>
 						))}
 					{/* TODO: move AddTag on top next to close button, becouse with big amount of tags button will be far down */}
@@ -98,7 +98,7 @@ const AddTag = ({}) => {
 					</label>
 					<button
 						onClick={() =>
-							addTag({ name: newTagName, isPublic: isNewTagPublic })
+							addTag.mutate({ name: newTagName, isPublic: isNewTagPublic })
 						}
 					>
 						+

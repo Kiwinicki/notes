@@ -12,6 +12,9 @@ import useNoteStore, {
 	errorDescriptions,
 } from '../../../hooks/useNoteStore';
 import { ErrorBoundary } from 'react-error-boundary';
+import remarkMath from 'remark-math';
+import markdown from 'remark-parse';
+import rehypeKatex from 'rehype-katex';
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
@@ -34,7 +37,14 @@ export const Editor = ({ saveHandler }) => {
 		(async () => {
 			if (content) {
 				try {
-					const mdx = await serialize(content);
+					const mdx = await serialize(content, {
+						mdxOptions: {
+							remarkPlugins: [markdown, remarkMath],
+							rehypePlugins: [rehypeKatex],
+							format: 'mdx',
+						},
+						parseFrontmatter: false,
+					});
 					setSerializedContent(mdx);
 					setError({ [errorTypes.serialize]: false });
 				} catch (err) {
@@ -48,7 +58,14 @@ export const Editor = ({ saveHandler }) => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const mdx = await serialize(content);
+				const mdx = await serialize(content, {
+					mdxOptions: {
+						remarkPlugins: [markdown, remarkMath],
+						rehypePlugins: [rehypeKatex],
+						format: 'mdx',
+					},
+					parseFrontmatter: false,
+				});
 				setSerializedContent(mdx);
 				setError({ [errorTypes.serialize]: false });
 			} catch (err) {

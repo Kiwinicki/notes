@@ -45,10 +45,8 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 									</div>
 								))}
 						</div>
-						{/* TODO: remove note onClick */}
 						<button
 							className={styles.removeButton}
-							// FIXME: removing from notes don't affect on displayed notes on home page because on HomePage matchingNotes and notes from useRealmStore is not synchronized
 							onClick={(ev) => {
 								ev.preventDefault();
 								deleteNote.mutate({ noteId: _id.toString() });
