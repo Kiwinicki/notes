@@ -2,7 +2,6 @@ import React from 'react';
 import Head from 'next/head';
 import { Editor } from '../components/shared/Editor/Editor';
 import { AnonymousRedirect } from '../components/shared/AnonymousRedirect';
-import useRealmStore from '../hooks/useRealmStore';
 import useNoteStore, { errorTypes } from '../hooks/useNoteStore';
 import { useNotes } from '../store/useNotes';
 import { useApp } from '../store/useApp';

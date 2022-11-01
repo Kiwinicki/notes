@@ -5,8 +5,8 @@ import { Switch } from '../../Switch/Switch';
 import { Input } from '../../Input/Input';
 import { Select } from '../../Select/Select';
 import { IconCheckbox } from '../../IconCheckbox/IconCheckbox';
-import useRealmStore from '../../../../hooks/useRealmStore';
 import useNoteStore, { errorTypes } from '../../../../hooks/useNoteStore';
+import { useTags } from '../../../../store/useTags';
 
 export const Header = ({
 	saveHandler,
@@ -16,7 +16,7 @@ export const Header = ({
 	isPreviewOpen,
 	toggleIsPreviewOpen,
 }) => {
-	const tags = useRealmStore((state) => state.tags);
+	const [{ data: tags }] = useTags();
 
 	const title = useNoteStore((state) => state.title);
 	const noteTags = useNoteStore((state) => state.noteTags);

@@ -5,7 +5,6 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { Alert } from '../Alert/Alert';
 import { components } from '../../mdx/';
-import useRealmStore from '../../../hooks/useRealmStore';
 import { useToggle } from '../../../hooks/useToggle';
 import useNoteStore, {
 	errorTypes,
@@ -15,11 +14,16 @@ import { ErrorBoundary } from 'react-error-boundary';
 import remarkMath from 'remark-math';
 import markdown from 'remark-parse';
 import rehypeKatex from 'rehype-katex';
+import { useTags } from '../../../store/useTags';
 
 // TODO: adding images to note (convert to binary/base64 or something)
 
 export const Editor = ({ saveHandler }) => {
-	const tags = useRealmStore((state) => state.tags);
+	const [
+		{
+			data: { tags },
+		},
+	] = useTags();
 
 	const title = useNoteStore((state) => state.title);
 	const content = useNoteStore((state) => state.content);
@@ -101,7 +105,7 @@ export const Editor = ({ saveHandler }) => {
 				setError({ [errorTypes.emptyTitle]: false });
 			}
 		};
-		validate();
+		// validate();
 	}, [title, content, isPublic, noteTags]);
 
 	return (
