@@ -1,0 +1,14 @@
+.mdxOutput {
+	word-break: break-word;
+	position: relative;
+	border: 1px solid green;
+	height: 100%;
+}
+
+.scrollableOutput {
+	position: absolute;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100%;
+	padding: 3px;
+}

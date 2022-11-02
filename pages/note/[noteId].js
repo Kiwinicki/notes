@@ -1,8 +1,50 @@
+import { useEffect } from 'react';
 import Head from 'next/head';
-import { Note } from '../../components/NotePage/NotePage';
 import { Layout } from '../../components/shared/Layout/Layout';
+import { Editor } from '../../components/shared/Editor/Editor';
+import { useRouter } from 'next/router';
+import useNoteStore, { setValues } from '../../store/useNoteStore';
+import { useApp } from '../../store/useApp';
+import { useNotes } from '../../store/useNotes';
+import { Loader } from '../../components/shared/Loader/Loader';
 
 export default function NotePage() {
+	const {
+		query: { noteId },
+	} = useRouter();
+
+	const [{ data: appData }] = useApp({});
+	const [
+		{ data: fetchedNoteData, isSuccess, isLoading, isError },
+		{ updateNote },
+	] = useNotes({
+		noteId,
+	});
+
+	useEffect(() => {
+		if (fetchedNoteData && isSuccess) {
+			const { title, content, isPublic, tags } = fetchedNoteData;
+			setValues({ title, content, isPublic, tags });
+		}
+	}, [fetchedNoteData, isSuccess]);
+
+	const { errors, ...noteData } = useNoteStore();
+	const saveHandler = async () => {
+		const isAnyError = Object.values(errors).some((err) => err);
+		if (appData.db && !isAnyError) {
+			try {
+				console.log(noteData);
+
+				const insertedId = await updateNote.mutate(noteData);
+				console.log(insertedId);
+			} catch (err) {
+				console.error(err);
+				// TODO: handle saving error
+				// setError(errorTypes.savingError);
+			}
+		}
+	};
+
 	return (
 		<>
 			<title>Notatka</title>
@@ -11,7 +53,9 @@ export default function NotePage() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Layout>
-				<Note />
+				{isSuccess && <Editor saveHandler={saveHandler} />}
+				{isLoading && <Loader />}
+				{isError && <p>Wystąpił błąd podczas pobierania danych</p>}
 			</Layout>
 		</>
 	);
