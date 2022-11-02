@@ -54,6 +54,7 @@ export default function NotePage() {
 			</Head>
 			<Layout>
 				{isSuccess && <Editor saveHandler={saveHandler} />}
+				{/* TODO: center loader */}
 				{isLoading && <Loader />}
 				{isError && <p>Wystąpił błąd podczas pobierania danych</p>}
 			</Layout>

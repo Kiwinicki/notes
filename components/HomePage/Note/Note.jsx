@@ -1,29 +1,14 @@
-import { useState, useEffect } from 'react';
 import styles from './Note.module.scss';
 import { MDXRemote } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
 import { components } from '../../mdx';
 import Link from 'next/link';
 import { useNotes } from '../../../store/useNotes';
-import remarkMath from 'remark-math';
-import markdown from 'remark-parse';
-import rehypeKatex from 'rehype-katex';
+import { useRenderMDX } from '../../../hooks/useRenderMDX';
 
-export const Note = ({ title, content, tags = [], isPublic, _id }) => {
-	const [serializedContent, setSerializedContent] = useState(null);
-
+export const Note = ({ title, content = null, tags = [], isPublic, _id }) => {
 	const [, { deleteNote }] = useNotes({});
 
-	useEffect(() => {
-		serialize(content, {
-			mdxOptions: {
-				remarkPlugins: [markdown, remarkMath],
-				rehypePlugins: [rehypeKatex],
-				format: 'mdx',
-			},
-			parseFrontmatter: false,
-		}).then((x) => setSerializedContent(x));
-	}, [content]);
+	const renderedMDX = useRenderMDX(content);
 
 	return (
 		<Link href={`/note/${_id.toString()}`}>
@@ -31,8 +16,8 @@ export const Note = ({ title, content, tags = [], isPublic, _id }) => {
 				<article className={styles.note}>
 					<p className={styles.title}>{title}</p>
 					<div className={styles.content}>
-						{serializedContent && (
-							<MDXRemote {...serializedContent} components={components} />
+						{renderedMDX && (
+							<MDXRemote {...renderedMDX} components={components} />
 						)}
 					</div>
 					<div className={styles.bottom}>
