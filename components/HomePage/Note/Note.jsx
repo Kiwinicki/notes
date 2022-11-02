@@ -4,8 +4,10 @@ import { components } from '../../mdx';
 import Link from 'next/link';
 import { useNotes } from '../../../store/useNotes';
 import { useRenderMDX } from '../../../hooks/useRenderMDX';
+import { useApp, userTypes } from '../../../store/useApp';
 
 export const Note = ({ title, content = null, tags = [], isPublic, _id }) => {
+	const [{ data }] = useApp({});
 	const [, { deleteNote }] = useNotes({});
 
 	const renderedMDX = useRenderMDX(content);
@@ -30,15 +32,17 @@ export const Note = ({ title, content = null, tags = [], isPublic, _id }) => {
 									</div>
 								))}
 						</div>
-						<button
-							className={styles.removeButton}
-							onClick={(ev) => {
-								ev.preventDefault();
-								deleteNote.mutate({ noteId: _id.toString() });
-							}}
-						>
-							<TrashIcon />
-						</button>
+						{data?.userType === userTypes.admin && (
+							<button
+								className={styles.removeButton}
+								onClick={(ev) => {
+									ev.preventDefault();
+									deleteNote.mutate({ noteId: _id.toString() });
+								}}
+							>
+								<TrashIcon />
+							</button>
+						)}
 					</div>
 				</article>
 			</a>
