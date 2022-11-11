@@ -36,9 +36,10 @@ export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 	// initial selected Select options
 	useEffect(() => {
 		if (allOptions.length > 0) {
-			const initSelected = allOptions.filter((tag) =>
-				tags.includes(tag.value)
-			);
+			const initSelected = allOptions
+				.filter((tag) => tags.includes(tag.value))
+				.map((tag) => tag.value);
+			console.log(initSelected);
 			setSelectedOptions(initSelected);
 		}
 	}, [allOptions]);
@@ -46,11 +47,13 @@ export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 	// sync selected options with noteStore
 	useEffect(() => {
 		if (allOptions.length > 0) {
-			setValues({ tags: selectedOptions.map((tag) => tag.value) });
+			setValues({ tags: selectedOptions });
 		}
 	}, [selectedOptions]);
 
-	console.log(allOptions, selectedOptions);
+	useEffect(() => {
+		console.log(allOptions, selectedOptions);
+	}, [allOptions, selectedOptions]);
 
 	if (appData.userType === userTypes.admin) {
 		return (
@@ -87,11 +90,11 @@ export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 						{/* <label htmlFor="switch" >{isPublic ? 'Publiczna' : 'Prywatna'}</label> */}
 					</div>
 					<Select
-						multiple
-						value={selectedOptions}
-						onChange={(val) => setSelectedOptions(val)}
 						options={allOptions}
-						title="Lista tagów"
+						selectedOptions={selectedOptions}
+						onChange={setSelectedOptions}
+						title={'tagi'}
+						multiple
 						// TODO: error handling (validation and displaying)
 						// {...(errors[errorTypes.emptyTag] && { error: true })}
 					/>
