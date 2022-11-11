@@ -10,7 +10,8 @@ import useNoteStore, {
 	setValues,
 	toggleIsPublic,
 } from '../../../../store/useNoteStore';
-export const EditorNavBar = ({ saveHandler }) => {
+
+export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 	const [{ data: appData }] = useApp();
 	const [{ data: allTags, isSuccess: tagsSuccess }] = useTags();
 
@@ -24,7 +25,9 @@ export const EditorNavBar = ({ saveHandler }) => {
 		if (tagsSuccess) {
 			const all = allTags.map((tag) => ({
 				value: tag.name,
-				label: `${tag.name} (${tag.isPublic ? 'publiczna' : 'prywatna'})`,
+				label: `${tag.name} (${
+					tag.isPublic ? 'publiczna' : 'prywatna'
+				})`,
 			}));
 			setAllOptions(all);
 		}
@@ -33,7 +36,9 @@ export const EditorNavBar = ({ saveHandler }) => {
 	// initial selected Select options
 	useEffect(() => {
 		if (allOptions.length > 0) {
-			const initSelected = allOptions.filter((tag) => tags.includes(tag.value));
+			const initSelected = allOptions.filter((tag) =>
+				tags.includes(tag.value)
+			);
 			setSelectedOptions(initSelected);
 		}
 	}, [allOptions]);
@@ -45,57 +50,67 @@ export const EditorNavBar = ({ saveHandler }) => {
 		}
 	}, [selectedOptions]);
 
+	console.log(allOptions, selectedOptions);
+
 	if (appData.userType === userTypes.admin) {
 		return (
-			<nav className={styles.container}>
-				<Button>Edytor</Button>
-				<Button>Podgląd</Button>
-				<div className={styles.titleContainer}>
-					<label htmlFor="title" className="srOnly">
-						Tytuł notatki
-					</label>
-					<Input
-						id="title"
-						placeholder="Tytuł notatki"
-						title="Tytuł notatki"
-						value={title}
-						onChange={(e) => setValues({ title: e.target.value })}
+			<div className={styles.scrollableContainer}>
+				<nav className={styles.container}>
+					<Button onClick={toggleEditor}>Edytor</Button>
+					<Button onClick={togglePreview}>Podgląd</Button>
+					<div className={styles.titleContainer}>
+						<label htmlFor="title" className="srOnly">
+							Tytuł notatki
+						</label>
+						<Input
+							id="title"
+							placeholder="Tytuł notatki"
+							title="Tytuł notatki"
+							value={title}
+							onChange={(e) =>
+								setValues({ title: e.target.value })
+							}
+							// TODO: error handling (validation and displaying)
+							// {...(errors[errorTypes.emptyTitle] && { error: true })}
+						/>
+					</div>
+					<div className={styles.switch}>
+						<Switch
+							id="switch"
+							value={isPublic}
+							onChange={() => toggleIsPublic()}
+							title={`Status notatki: ${
+								isPublic ? 'Publiczna' : 'Prywatna'
+							}`}
+						/>
+						{/* TODO: some slim label for isPublic switch */}
+						{/* <label htmlFor="switch" >{isPublic ? 'Publiczna' : 'Prywatna'}</label> */}
+					</div>
+					<Select
+						multiple
+						value={selectedOptions}
+						onChange={(val) => setSelectedOptions(val)}
+						options={allOptions}
+						title="Lista tagów"
 						// TODO: error handling (validation and displaying)
-						// {...(errors[errorTypes.emptyTitle] && { error: true })}
+						// {...(errors[errorTypes.emptyTag] && { error: true })}
 					/>
-				</div>
-				<div className={styles.switch}>
-					<Switch
-						id="switch"
-						value={isPublic}
-						onChange={() => toggleIsPublic()}
-						title={`Status notatki: ${isPublic ? 'Publiczna' : 'Prywatna'}`}
-					/>
-					{/* TODO: some slim label for isPublic switch */}
-					{/* <label htmlFor="switch" >{isPublic ? 'Publiczna' : 'Prywatna'}</label> */}
-				</div>
-				<Select
-					multiple
-					value={selectedOptions}
-					onChange={(val) => setSelectedOptions(val)}
-					options={allOptions}
-					title="Lista tagów"
-					// TODO: error handling (validation and displaying)
-					// {...(errors[errorTypes.emptyTag] && { error: true })}
-				/>
-				{/* TODO: disable submit button if errors */}
-				<Button
-					type="submit"
-					onClick={() => {
-						console.log(selectedOptions);
-						const tags = selectedOptions.map((tag) => tag.value);
-						console.log(tags);
-						saveHandler();
-					}}
-				>
-					Zapisz
-				</Button>
-			</nav>
+					{/* TODO: disable submit button if errors */}
+					<Button
+						type="submit"
+						onClick={() => {
+							console.log(selectedOptions);
+							const tags = selectedOptions.map(
+								(tag) => tag.value
+							);
+							console.log(tags);
+							saveHandler();
+						}}
+					>
+						Zapisz
+					</Button>
+				</nav>
+			</div>
 		);
 	}
 };

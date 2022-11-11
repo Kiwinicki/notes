@@ -1,10 +1,16 @@
 @use '../../../../styles/vars' as *;
 
+.scrollableContainer {
+	display: flex;
+	max-width: 100%;
+	overflow-x: auto;
+	padding: $spacing;
+}
+
 .container {
 	width: 100%;
 	display: flex;
 	align-items: center;
 	border-bottom: $border;
-	padding: $spacing;
 	gap: $spacing;
 }
