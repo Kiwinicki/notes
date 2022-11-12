@@ -1,16 +1,17 @@
 @use '../../../../styles/vars' as *;
+@use '../../../../styles/mixins' as *;
 
 .scrollableContainer {
 	display: flex;
 	max-width: 100%;
 	overflow-x: auto;
 	padding: $spacing;
+	@include border;
 }
 
 .container {
 	width: 100%;
 	display: flex;
 	align-items: center;
-	border-bottom: $border;
 	gap: $spacing;
 }

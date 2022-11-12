@@ -4,12 +4,7 @@
 
 .container {
 	display: inline-block;
-}
-
-.title {
-	display: block;
-	font-size: small;
-	color: $on-bg;
+	position: relative;
 }
 
 .selectButton {
@@ -24,6 +19,8 @@
 
 	& .buttonDescription {
 		display: block;
+		width: max-content;
+		flex-grow: 1;
 	}
 
 	& .buttonIcon {
@@ -35,18 +32,6 @@
 			height: 20px;
 		}
 	}
-}
-
-.transition {
-	transition: $duration ease-in-out;
-}
-
-.leaveTo {
-	opacity: 0;
-}
-
-.leaveFrom {
-	opacity: 100;
 }
 
 .selectOptions {

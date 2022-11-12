@@ -51,10 +51,6 @@ export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 		}
 	}, [selectedOptions]);
 
-	useEffect(() => {
-		console.log(allOptions, selectedOptions);
-	}, [allOptions, selectedOptions]);
-
 	if (appData.userType === userTypes.admin) {
 		return (
 			<div className={styles.scrollableContainer}>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './Select.module.scss';
-import { Listbox, Transition } from '@headlessui/react';
+import { Listbox } from '@headlessui/react';
 
 export const Select = ({
 	options = [],
@@ -25,72 +25,62 @@ export const Select = ({
 			multiple={multiple}
 		>
 			{() => (
-				<>
-					<div className={styles.container} ref={selectRef}>
-						<Listbox.Button
-							className={styles.selectButton}
-							onClick={() => setIsOpen(!isOpen)}
-							open={isOpen}
-						>
-							<span className={styles.buttonDescription}>
-								{selectedOptions.length < 1
-									? `Wybierz ${title}`
-									: `Wybrano (${selectedOptions.length})`}
-							</span>
-							<span className={styles.buttonIcon}>
-								<DropdownIcon />
-							</span>
-						</Listbox.Button>
-						<Transition
-							unmount={false}
-							show={isOpen}
-							leaveFrom={styles.leaveFrom}
-							leaveTo={styles.leaveTo}
-						>
-							<Listbox.Options
-								static
-								className={styles.selectOptions}
-								style={{
-									left: selectRef.current?.getBoundingClientRect()
-										.left,
-								}}
-							>
-								{options.map(({ label, value }, i) => {
-									const selected = isSelected(value);
-									return (
-										<Listbox.Option
-											key={`${value}${i}`}
-											value={value}
+				<div className={styles.container} ref={selectRef}>
+					<Listbox.Button
+						className={styles.selectButton}
+						onClick={() => setIsOpen(!isOpen)}
+						open={isOpen}
+					>
+						<span className={styles.buttonDescription}>
+							{selectedOptions.length < 1
+								? `Wybierz ${title}`
+								: `Wybrano (${selectedOptions.length})`}
+						</span>
+						<span className={styles.buttonIcon}>
+							<DropdownIcon />
+						</span>
+					</Listbox.Button>
+					<Listbox.Options
+						static
+						className={styles.selectOptions}
+						style={{
+							left: selectRef.current?.getBoundingClientRect()
+								.left,
+							display: isOpen ? 'initial' : 'none',
+						}}
+					>
+						{options.map(({ label, value }, i) => {
+							const selected = isSelected(value);
+							return (
+								<Listbox.Option
+									key={`${value}${i}`}
+									value={value}
+								>
+									{({ active }) => (
+										<div
+											className={`${styles.option} ${
+												active
+													? styles.activeOption
+													: ''
+											}`}
 										>
-											{({ active }) => (
-												<div
-													className={`${
-														styles.option
-													} ${
-														active
-															? styles.activeOption
-															: ''
-													}`}
+											<span>{label}</span>
+											{selected && (
+												<span
+													className={
+														styles.optionIcon
+													}
 												>
-													<span>{label}</span>
-													{selected && (
-														<span
-															className={
-																styles.optionIcon
-															}
-														>
-															<CheckIcon />
-														</span>
-													)}
-												</div>
+													<CheckIcon />
+												</span>
 											)}
-										</Listbox.Option>
-									);
-								})}
-							</Listbox.Options>
-						</Transition>
-					</div>
-				</>
+										</div>
+									)}
+								</Listbox.Option>
+							);
+						})}
+					</Listbox.Options>
+				</div>
 			)}
 		</Listbox>
 	);
