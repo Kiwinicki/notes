@@ -15,9 +15,10 @@ export const Select = ({
 		return selectedOptions.find((el) => el === value) ? true : false;
 	};
 
+	const selectRef = useRef(null);
+
 	return (
 		<Listbox
-			className={styles.select}
 			value={selectedOptions}
 			onChange={onChange}
 			open={isOpen}
@@ -25,34 +26,34 @@ export const Select = ({
 		>
 			{() => (
 				<>
-					<div className={styles.container}>
-						<span className={styles.buttonContainer}>
-							<Listbox.Button
-								className={styles.selectButton}
-								onClick={() => setIsOpen(!isOpen)}
-								open={isOpen}
-							>
-								<span className={styles.buttonDescription}>
-									{selectedOptions.length < 1
-										? `Wybierz ${title}`
-										: `Wybrano (${selectedOptions.length})`}
-								</span>
-								<span className={styles.buttonIcon}>
-									<DropdownIcon />
-								</span>
-							</Listbox.Button>
-						</span>
+					<div className={styles.container} ref={selectRef}>
+						<Listbox.Button
+							className={styles.selectButton}
+							onClick={() => setIsOpen(!isOpen)}
+							open={isOpen}
+						>
+							<span className={styles.buttonDescription}>
+								{selectedOptions.length < 1
+									? `Wybierz ${title}`
+									: `Wybrano (${selectedOptions.length})`}
+							</span>
+							<span className={styles.buttonIcon}>
+								<DropdownIcon />
+							</span>
+						</Listbox.Button>
 						<Transition
 							unmount={false}
 							show={isOpen}
-							leave={styles.transition}
 							leaveFrom={styles.leaveFrom}
 							leaveTo={styles.leaveTo}
-							className={styles.transition}
 						>
 							<Listbox.Options
 								static
 								className={styles.selectOptions}
+								style={{
+									left: selectRef.current?.getBoundingClientRect()
+										.left,
+								}}
 							>
 								{options.map(({ label, value }, i) => {
 									const selected = isSelected(value);
