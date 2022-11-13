@@ -53,62 +53,64 @@ export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 
 	if (appData.userType === userTypes.admin) {
 		return (
-			<div className={styles.scrollableContainer}>
-				<nav className={styles.container}>
-					<Button onClick={toggleEditor}>Edytor</Button>
-					<Button onClick={togglePreview}>Podgląd</Button>
-					<div className={styles.titleContainer}>
-						<label htmlFor="title" className="srOnly">
-							Tytuł notatki
-						</label>
-						<Input
-							id="title"
-							placeholder="Tytuł notatki"
-							title="Tytuł notatki"
-							value={title}
-							onChange={(e) =>
-								setValues({ title: e.target.value })
-							}
+			<div style={{ position: 'relative', overflow: 'hidden' }}>
+				<div className={styles.outsideContainer}>
+					<nav className={styles.insideContainer}>
+						<Button onClick={toggleEditor}>Edytor</Button>
+						<Button onClick={togglePreview}>Podgląd</Button>
+						<div className={styles.titleContainer}>
+							<label htmlFor="title" className="srOnly">
+								Tytuł notatki
+							</label>
+							<Input
+								id="title"
+								placeholder="Tytuł notatki"
+								title="Tytuł notatki"
+								value={title}
+								onChange={(e) =>
+									setValues({ title: e.target.value })
+								}
+								// TODO: error handling (validation and displaying)
+								// {...(errors[errorTypes.emptyTitle] && { error: true })}
+							/>
+						</div>
+						<div className={styles.switch}>
+							<Switch
+								id="switch"
+								value={isPublic}
+								onChange={() => toggleIsPublic()}
+								title={`Status notatki: ${
+									isPublic ? 'Publiczna' : 'Prywatna'
+								}`}
+							/>
+							{/* TODO: some slim label for isPublic switch */}
+							{/* <label htmlFor="switch" >{isPublic ? 'Publiczna' : 'Prywatna'}</label> */}
+						</div>
+						<Select
+							options={allOptions}
+							selectedOptions={selectedOptions}
+							onChange={setSelectedOptions}
+							title={'tagi'}
+							multiple
 							// TODO: error handling (validation and displaying)
-							// {...(errors[errorTypes.emptyTitle] && { error: true })}
+							// {...(errors[errorTypes.emptyTag] && { error: true })}
 						/>
-					</div>
-					<div className={styles.switch}>
-						<Switch
-							id="switch"
-							value={isPublic}
-							onChange={() => toggleIsPublic()}
-							title={`Status notatki: ${
-								isPublic ? 'Publiczna' : 'Prywatna'
-							}`}
-						/>
-						{/* TODO: some slim label for isPublic switch */}
-						{/* <label htmlFor="switch" >{isPublic ? 'Publiczna' : 'Prywatna'}</label> */}
-					</div>
-					<Select
-						options={allOptions}
-						selectedOptions={selectedOptions}
-						onChange={setSelectedOptions}
-						title={'tagi'}
-						multiple
-						// TODO: error handling (validation and displaying)
-						// {...(errors[errorTypes.emptyTag] && { error: true })}
-					/>
-					{/* TODO: disable submit button if errors */}
-					<Button
-						type="submit"
-						onClick={() => {
-							console.log(selectedOptions);
-							const tags = selectedOptions.map(
-								(tag) => tag.value
-							);
-							console.log(tags);
-							saveHandler();
-						}}
-					>
-						Zapisz
-					</Button>
-				</nav>
+						{/* TODO: disable submit button if errors */}
+						<Button
+							type="submit"
+							onClick={() => {
+								console.log(selectedOptions);
+								const tags = selectedOptions.map(
+									(tag) => tag.value
+								);
+								console.log(tags);
+								saveHandler();
+							}}
+						>
+							Zapisz
+						</Button>
+					</nav>
+				</div>
 			</div>
 		);
 	}
