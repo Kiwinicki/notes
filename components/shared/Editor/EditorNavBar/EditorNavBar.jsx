@@ -11,7 +11,13 @@ import useNoteStore, {
 	toggleIsPublic,
 } from '../../../../store/useNoteStore';
 
-export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
+export const EditorNavBar = ({
+	saveHandler,
+	toggleEditor,
+	togglePreview,
+	isEditorOpen,
+	isPreviewOpen,
+}) => {
 	const [{ data: appData }] = useApp();
 	const [{ data: allTags, isSuccess: tagsSuccess }] = useTags();
 
@@ -56,8 +62,12 @@ export const EditorNavBar = ({ saveHandler, toggleEditor, togglePreview }) => {
 			<div style={{ position: 'relative', overflow: 'hidden' }}>
 				<div className={styles.outsideContainer}>
 					<nav className={styles.insideContainer}>
-						<Button onClick={toggleEditor}>Edytor</Button>
-						<Button onClick={togglePreview}>Podgląd</Button>
+						<Button active={isEditorOpen} onClick={toggleEditor}>
+							Edytor
+						</Button>
+						<Button active={isPreviewOpen} onClick={togglePreview}>
+							Podgląd
+						</Button>
 						<div className={styles.titleContainer}>
 							<label htmlFor="title" className="srOnly">
 								Tytuł notatki

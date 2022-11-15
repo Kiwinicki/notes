@@ -5,24 +5,28 @@ import MonacoEditor from '@monaco-editor/react';
 import { EditorNavBar } from './EditorNavBar/EditorNavBar';
 import { MDXOutput } from './MDXOutput/MDXOutput';
 import useNoteStore, { setValues } from '../../../store/useNoteStore';
-import { useToggle } from '../../../hooks/useToggle';
 
 export const Editor = ({ saveHandler }) => {
 	const [{ data }] = useApp({});
 
 	const content = useNoteStore((state) => state.content);
 
-	// TODO: zmienić na useState gdy jedno jest wyłączone to drugiego nie można
-	const [isEditorOpen, setEditorOpen] = useToggle(false);
-	const [isPreviewOpen, setPreviewOpen] = useToggle(true);
+	const [isEditorOpen, setEditorOpen] = useState(false);
+	const [isPreviewOpen, setPreviewOpen] = useState(true);
+
+	const editorToggler = () =>
+		setEditorOpen((prev) => (!isPreviewOpen ? true : !prev));
+	const previewToggler = () =>
+		setPreviewOpen((prev) => (!isEditorOpen ? true : !prev));
 
 	return (
 		<div className={styles.noteContainer}>
 			<div className={styles.nav}>
 				<EditorNavBar
 					saveHandler={saveHandler}
-					toggleEditor={setEditorOpen}
-					togglePreview={setPreviewOpen}
+					{...{ isEditorOpen, isPreviewOpen }}
+					toggleEditor={editorToggler}
+					togglePreview={previewToggler}
 				/>
 			</div>
 			{data.userType === userTypes.admin && isEditorOpen && (
