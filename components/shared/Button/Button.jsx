@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import styles from './Button.module.scss';
 
-export const Button = ({ className, children, error, ...rest }) => {
+export const Button = ({ className = '', children, error, ...rest }) => {
 	return (
 		<button
-			className={`${styles.button} ${error ? styles.error : ''} ${className}`}
+			className={`${styles.button} ${
+				error ? styles.error : ''
+			} ${className}`}
 			{...rest}
 		>
 			{children}

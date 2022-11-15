@@ -12,6 +12,7 @@ export const Editor = ({ saveHandler }) => {
 
 	const content = useNoteStore((state) => state.content);
 
+	// TODO: zmienić na useState gdy jedno jest wyłączone to drugiego nie można
 	const [isEditorOpen, setEditorOpen] = useToggle(false);
 	const [isPreviewOpen, setPreviewOpen] = useToggle(true);
 
