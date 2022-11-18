@@ -1,4 +1,4 @@
-import styles from './link.module.scss';
+import styles from './Link.module.scss';
 
 export const Link = ({ children, href }) => {
 	return (
