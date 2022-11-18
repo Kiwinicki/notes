@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styles from './Editor.module.scss';
 import { useApp, userTypes } from '../../../store/useApp';
 import MonacoEditor from '@monaco-editor/react';
 import { EditorNavBar } from './EditorNavBar/EditorNavBar';
 import { MDXOutput } from './MDXOutput/MDXOutput';
 import useNoteStore, { setValues } from '../../../store/useNoteStore';
+import { Resizable } from 're-resizable';
 
 export const Editor = ({ saveHandler }) => {
 	const [{ data }] = useApp({});
@@ -30,7 +31,10 @@ export const Editor = ({ saveHandler }) => {
 				/>
 			</div>
 			{data.userType === userTypes.admin && isEditorOpen && (
-				<div className={styles.editorContainer}>
+				<Resizable
+					className={styles.editorContainer}
+					handleClasses={{ right: styles.resize }}
+				>
 					<MonacoEditor
 						defaultLanguage="markdown"
 						defaultValue={content}
@@ -43,7 +47,7 @@ export const Editor = ({ saveHandler }) => {
 						}}
 						onChange={(val) => setValues({ content: val })}
 					/>
-				</div>
+				</Resizable>
 			)}
 			{isPreviewOpen && (
 				<div className={styles.contentContainer}>

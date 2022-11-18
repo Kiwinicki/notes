@@ -1,0 +1,21 @@
+@use '../../../styles/mixins' as *;
+@use '../../../styles/vars' as *;
+
+.container {
+	display: grid;
+	grid-template-columns: 1em auto;
+	gap: 10px;
+	align-items: center;
+
+	.checkbox {
+		width: 100%;
+		aspect-ratio: 1;
+		margin: 0;
+		padding: 0;
+	}
+
+	.checkbox:checked + .text {
+		text-decoration: line-through;
+		opacity: 0.75;
+	}
+}
