@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styles from './Editor.module.scss';
 import { useApp, userTypes } from '../../../store/useApp';
 import MonacoEditor from '@monaco-editor/react';

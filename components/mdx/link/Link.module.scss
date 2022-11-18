@@ -1,0 +1,15 @@
+@use '../../../styles/vars' as *;
+
+.link {
+	color: $primary-variant;
+	text-decoration: underline;
+	transition: $duration;
+
+	&:visited {
+		color: $primary-variant;
+	}
+
+	&:hover {
+		color: $primary;
+	}
+}
