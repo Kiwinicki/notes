@@ -1,15 +1,18 @@
 import { Credentials, App } from 'realm-web';
 import { useQuery } from '@tanstack/react-query';
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
 
 const REALM_APP_ID = process.env.NEXT_PUBLIC_REALM_APP_ID;
 export const app = new App({ id: REALM_APP_ID });
 
-// TODO: store appKey in sessionStorage to persist login out on refresh or something?
-const useKeysStore = create((set) => ({
-	appQueryKey: ['app', { login: '', password: '' }],
-	setAppQueryKey: (key) => set({ appQueryKey: key }),
-}));
+const useKeysStore = create(
+	persist((set) => ({
+		appQueryKey: ['app', { login: '', password: '' }],
+		setAppQueryKey: (key) => set({ appQueryKey: key }),
+	})),
+	{ name: 'auth-store', getStorage: () => sessionStorage }
+);
 
 export const userTypes = Object.freeze({
 	visitor: 'visitor',
@@ -40,7 +43,9 @@ const getApp = ({ login, password }) => {
 
 				resolve({
 					user: app.currentUser,
-					userType: withLoginAndPasswd ? userTypes.admin : userTypes.visitor,
+					userType: withLoginAndPasswd
+						? userTypes.admin
+						: userTypes.visitor,
 					db,
 				});
 			});
