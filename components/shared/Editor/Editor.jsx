@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styles from './Editor.module.scss';
 import { useApp, userTypes } from '../../../store/useApp';
 import MonacoEditor from '@monaco-editor/react';
@@ -32,8 +32,18 @@ export const Editor = ({ saveHandler }) => {
 			</div>
 			{data.userType === userTypes.admin && isEditorOpen && (
 				<Resizable
-					className={styles.editorContainer}
+					enable={{
+						top: false,
+						right: true,
+						bottom: false,
+						left: false,
+						topRight: false,
+						bottomRight: false,
+						bottomLeft: false,
+						topLeft: false,
+					}}
 					handleClasses={{ right: styles.resize }}
+					className={styles.editorContainer}
 				>
 					<MonacoEditor
 						defaultLanguage="markdown"
